@@ -7,6 +7,7 @@ module.exports = {
     app: "./app.js"
   },
   module: {
+    noParse: /node_modules\/mapbox-gl\/dist\/mapbox-gl.js/,
     loaders: [
       {
         test: /\.js$/,

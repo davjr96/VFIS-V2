@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "whatwg-fetch";
 import ReactTable from "react-table";
-import "react-table/react-table.css";
 import matchSorter from "match-sorter";
+import { connect } from "react-redux";
 
 class TableView extends Component {
   constructor(props) {
@@ -55,14 +55,12 @@ class TableView extends Component {
       });
   }
 
-  componentDidMount() {
-    this.loadBridges(this.props.date);
-  }
-
   componentWillReceiveProps(nextProps) {
     this.loadBridges(nextProps.date);
   }
-
+  componentDidMount() {
+    this.loadBridges(this.props.date);
+  }
   render() {
     const columns = [
       {
@@ -139,4 +137,8 @@ class TableView extends Component {
   }
 }
 
-export default TableView;
+const mapStateToProps = state => ({
+  date: state.user.date
+});
+
+export default connect(mapStateToProps)(TableView);

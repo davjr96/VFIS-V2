@@ -1,9 +1,17 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+
 import "whatwg-fetch";
 import Select from "react-select";
 import moment from "moment";
+import { date } from "../actions/date";
+import { connect } from "react-redux";
 
 class DateComponent extends Component {
+  static propTypes = {
+    date: PropTypes.func.isRequired
+  };
+
   constructor(props) {
     super(props);
     this.loadDates = this.loadDates.bind(this);
@@ -26,6 +34,9 @@ class DateComponent extends Component {
           dates: json.dates,
           date: json.dates[0][0]
         });
+        this.props.date({
+          date: json.dates[0][0]
+        });
       })
       .catch(function(ex) {
         console.log("parsing failed", ex);
@@ -38,7 +49,9 @@ class DateComponent extends Component {
 
   //When a different date is selected, update the state to the selected date
   handleChange(e) {
-    console.log(this.state.dates[e.value][0]);
+    this.props.date({
+      date: this.state.dates[e.value][0]
+    });
     this.setState({
       date: this.state.dates[e.value][0],
       selected: e.value
@@ -71,4 +84,4 @@ class DateComponent extends Component {
   }
 }
 
-export default DateComponent;
+export default connect(null, { date })(DateComponent);

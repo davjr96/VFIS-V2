@@ -24,7 +24,7 @@ class Map extends Component {
     super(props);
     this.loadBridges = this.loadBridges.bind(this);
     this.state = {
-      date: "20171216-180000",
+      date: "",
       bridges: [],
       viewport: {
         latitude: 36.8,
@@ -55,14 +55,17 @@ class Map extends Component {
   }
 
   componentDidMount() {
+    this.loadBridges(this.props.date);
     window.addEventListener("resize", this._resize);
     this._resize();
-    this.loadBridges(this.state.date);
   }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this._resize);
   }
-
+  componentWillReceiveProps(nextProps) {
+    this.loadBridges(nextProps.date);
+  }
   _resize = () => {
     this.setState({
       viewport: {
@@ -148,6 +151,8 @@ class Map extends Component {
   }
 }
 
-export default connect(state => ({
-  authData: state.user.data
-}))(Map);
+const mapStateToProps = state => ({
+  date: state.user.date
+});
+
+export default connect(mapStateToProps)(Map);

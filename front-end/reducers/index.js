@@ -1,5 +1,4 @@
-import user from './user'
-
+import user from "./user";
 module.exports = {
   user
-}
+};

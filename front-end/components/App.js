@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../actions/user";
-import { LinkContainer } from "react-router-bootstrap";
 import {
   userIsAuthenticatedRedir,
   userIsNotAuthenticatedRedir,
@@ -17,11 +16,13 @@ import {
 } from "../auth";
 
 import Map from "./Map";
+import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
 
 const Login = userIsNotAuthenticatedRedir(LoginComponent);
-const Protected = userIsAuthenticatedRedir(Map);
+const ProtectedMap = userIsAuthenticatedRedir(Map);
+const ProtectedTable = userIsAuthenticatedRedir(Table);
 
 const LoginOnlyNav = userIsAuthenticated(({ logout }) => (
   <nav className="navbar navbar-dark bg-primary">
@@ -44,7 +45,9 @@ function App({ user, logout }) {
       <div>
         <LoginOnlyNav logout={logout} />
         <div>
-          <Route exact path="/" component={Protected} />
+          <Route exact path="/" component={ProtectedMap} />
+          <Route exact path="/table" component={ProtectedTable} />
+
           <Route path="/login" component={Login} />
         </div>
       </div>
