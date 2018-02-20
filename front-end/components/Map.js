@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "mapbox-gl";
 import MapGL, { Marker, Popup, NavigationControl } from "react-map-gl";
 import { connect } from "react-redux";
+import base64 from "base-64";
 
 import BridgePin from "./bridge-pin";
 import BridgeInfo from "./bridge-info";
@@ -40,7 +41,18 @@ class Map extends Component {
   }
 
   loadBridges(date) {
-    fetch("/api/bridges/" + date)
+    let headers = new Headers();
+
+    headers.append(
+      "Authorization",
+      "Basic " +
+        base64.encode(this.props.authData.user + ":" + this.props.authData.pass)
+    );
+
+    fetch("/api/bridges/" + date, {
+      method: "GET",
+      headers: headers
+    })
       .then(function(response) {
         return response.json();
       })
@@ -152,7 +164,8 @@ class Map extends Component {
 }
 
 const mapStateToProps = state => ({
-  date: state.user.date
+  date: state.user.date,
+  authData: state.user.data
 });
 
 export default connect(mapStateToProps)(Map);

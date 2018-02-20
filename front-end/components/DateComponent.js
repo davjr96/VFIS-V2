@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import base64 from "base-64";
 
 import "whatwg-fetch";
 import Select from "react-select";
@@ -25,7 +26,18 @@ class DateComponent extends Component {
   }
   //This function loads the dates of the data sets
   loadDates() {
-    fetch("/api/dates")
+    let headers = new Headers();
+
+    headers.append(
+      "Authorization",
+      "Basic " +
+        base64.encode(this.props.authData.user + ":" + this.props.authData.pass)
+    );
+
+    fetch("/api/dates", {
+      method: "GET",
+      headers: headers
+    })
       .then(function(response) {
         return response.json();
       })
@@ -83,5 +95,7 @@ class DateComponent extends Component {
     );
   }
 }
-
-export default connect(null, { date })(DateComponent);
+const mapStateToProps = state => ({
+  authData: state.user.data
+});
+export default connect(mapStateToProps, { date })(DateComponent);

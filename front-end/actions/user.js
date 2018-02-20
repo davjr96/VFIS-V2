@@ -1,5 +1,5 @@
 import * as constants from "../constants";
-var base64 = require("base-64");
+import base64 from "base-64";
 
 export const login = data => dispatch => {
   let headers = new Headers();

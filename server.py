@@ -20,8 +20,20 @@ auth = HTTPBasicAuth()
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(32), index=True)
+    email = db.Column(db.String(32), index=True)
     password_hash = db.Column(db.String(64))
+    first_name = db.Column(db.String())
+    middle_name = db.Column(db.String())
+    last_name = db.Column(db.String())
+    organization = db.Column(db.String())
+    title = db.Column(db.String())
+    subject_areas = db.Column(db.String())
+    role = db.Column(db.String())
+    country = db.Column(db.String())
+    state_province = db.Column(db.String())
+    phone_number = db.Column(db.String())
+    website = db.Column(db.String())
+
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
@@ -29,57 +41,39 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration=600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'id': self.id})
-
-    @staticmethod
-    def verify_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None    # valid token, but expired
-        except BadSignature:
-            return None    # invalid token
-        user = User.query.get(data['id'])
-        return user
-
 @auth.verify_password
-def verify_password(username_or_token, password):
-    # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token)
-    if not user:
-        # try to authenticate with username/password
-        user = User.query.filter_by(username=username_or_token).first()
-        if not user or not user.verify_password(password):
-            return False
+def verify_password(email, password):
+    # try to authenticate with username/password
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.verify_password(password):
+        return False
     g.user = user
     return True
 
 
 @app.route('/api/users', methods=['POST'])
 def new_user():
-    username = request.json.get('username')
+    email = request.json.get('username')
     password = request.json.get('password')
     if username is None or password is None:
         abort(400)    # missing arguments
-    if User.query.filter_by(username=username).first() is not None:
+    if User.query.filter_by(email=email).first() is not None:
         abort(400)    # existing user
-    user = User(username=username)
+    user = User(email=email)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    return (jsonify({'username': user.username}), 201,
+    return (jsonify({'email': user.email}), 201,
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
-@app.route('/api/users/<int:id>')
-def get_user(id):
-    user = User.query.get(id)
+@app.route('/api/users')
+@auth.login_required
+def get_user():
+    user = User.query.get(g.user.id)
     if not user:
         abort(400)
-    return jsonify({'username': user.username})
+    return jsonify({'email': user.email})
 
 
 @app.route('/api/login')
@@ -87,26 +81,14 @@ def get_user(id):
 def get_auth_token():
     return jsonify({"status": "OK"}), 200
 
-
-@app.route('/api/resource')
-@auth.login_required
-def get_resource():
-    return jsonify({'data': 'Hello, %s!' % g.user.username})
-
 class Structure(db.Model):
     __tablename__ = 'bridges'
-    id = db.Column(db.Integer, primary_key=True)
+    fedid = db.Column(db.String, primary_key=True)
     roadname = db.Column(db.String)
     xcord = db.Column(db.Float)
     ycord = db.Column(db.Float)
     stream = db.Column(db.String)
     roadelev = db.Column(db.Float)
-    date = db.Column(db.String)
-    maxwl = db.Column(db.Float)
-    floodedby = db.Column(db.Float)
-    fedid = db.Column(db.String)
-    starttime = db.Column(db.String)
-    endtime = db.Column(db.String)
 
     def to_json(self):
         return dict(id=self.id,
@@ -124,12 +106,20 @@ class Structure(db.Model):
 
 
 @app.route('/api/bridges/<date>')
+@auth.login_required
 def bridges(date):
     rows = Structure.query.filter_by(date=date).all()
     return jsonify([r.to_json() for r in rows])
 
+@app.route('/api/dates')
+@auth.login_required
+def dates():
+    rows = db.session.query(Structure.date).distinct()
+    return jsonify({"dates":rows.all()})
+
 
 @app.route('/api/kmz/<date>')
+@auth.login_required
 def kmz(date):
     rows = Structure.query.filter_by(date=date).all()
     ret = []
@@ -176,11 +166,6 @@ def kmz(date):
     print filename_
     return Response(kml.kml(), mimetype='application/kml', headers={"Content disposition": "attachment; filename=" + filename_, "Content-Type":"application/kml"})
 
-
-@app.route('/api/dates')
-def dates():
-    rows = db.session.query(Structure.date).distinct()
-    return jsonify({"dates":rows.all()})
 
 
 if __name__ == "__main__":

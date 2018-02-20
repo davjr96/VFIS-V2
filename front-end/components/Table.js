@@ -3,6 +3,7 @@ import "whatwg-fetch";
 import ReactTable from "react-table";
 import matchSorter from "match-sorter";
 import { connect } from "react-redux";
+import base64 from "base-64";
 
 class TableView extends Component {
   constructor(props) {
@@ -28,7 +29,18 @@ class TableView extends Component {
   }
 
   loadBridges(date) {
-    fetch("/api/bridges/" + date)
+    let headers = new Headers();
+
+    headers.append(
+      "Authorization",
+      "Basic " +
+        base64.encode(this.props.authData.user + ":" + this.props.authData.pass)
+    );
+
+    fetch("/api/bridges/" + date, {
+      method: "GET",
+      headers: headers
+    })
       .then(function(response) {
         return response.json();
       })
@@ -138,7 +150,8 @@ class TableView extends Component {
 }
 
 const mapStateToProps = state => ({
-  date: state.user.date
+  date: state.user.date,
+  authData: state.user.data
 });
 
 export default connect(mapStateToProps)(TableView);
