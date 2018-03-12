@@ -44,10 +44,10 @@ class DateComponent extends Component {
       .then(json => {
         this.setState({
           dates: json.dates,
-          date: json.dates[0][0]
+          date: json.dates[0]
         });
         this.props.date({
-          date: json.dates[0][0]
+          date: json.dates[0]
         });
       })
       .catch(function(ex) {
@@ -62,10 +62,10 @@ class DateComponent extends Component {
   //When a different date is selected, update the state to the selected date
   handleChange(e) {
     this.props.date({
-      date: this.state.dates[e.value][0]
+      date: this.state.dates[e.value]
     });
     this.setState({
-      date: this.state.dates[e.value][0],
+      date: this.state.dates[e.value],
       selected: e.value
     });
   }

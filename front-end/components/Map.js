@@ -67,9 +67,9 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    this.loadBridges(this.props.date);
     window.addEventListener("resize", this._resize);
     this._resize();
+    this.loadBridges(this.props.date);
   }
 
   componentWillUnmount() {
