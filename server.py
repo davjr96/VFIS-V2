@@ -41,6 +41,8 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 @auth.verify_password
 def verify_password(email, password):
@@ -52,7 +54,7 @@ def verify_password(email, password):
     return True
 
 
-@app.route('/api/users', methods=['POST'])
+@app.route('/api/user', methods=['POST'])
 def new_user():
     email = request.json.get('username')
     password = request.json.get('password')
@@ -68,13 +70,13 @@ def new_user():
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
-@app.route('/api/users')
+@app.route('/api/user')
 @auth.login_required
 def get_user():
     user = User.query.get(g.user.id)
     if not user:
         abort(400)
-    return jsonify({'email': user.email})
+    return jsonify(user.as_dict())
 
 
 @app.route('/api/login')
@@ -124,13 +126,14 @@ def dates():
 @app.route('/api/kmz/<date>')
 @auth.login_required
 def kmz(date):
-    rows = Structure.query.filter_by(date=date).all()
+    rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
     ret = []
     kml = simplekml.Kml()
     kml.document.name = "Bridge locations"
-    
+
     for row in rows:
-        ret.append(row.to_json())
+        ret.append(row._asdict())
+
     for bridge in ret:
         xcord = bridge['xcord']
         ycord = bridge['ycord']
@@ -140,10 +143,10 @@ def kmz(date):
         roadelev = bridge['roadelev']
         MaxWL = bridge['maxwl']
         floodedby = bridge['floodedby']
-        
+
         if MaxWL == -999.0:
             MaxWL = 0.0
-        
+
         npo = kml.newpoint(name=roadname, coords=[(xcord, ycord)])
         npo.description = \
             "<![CDATA[<table>" \
@@ -158,7 +161,7 @@ def kmz(date):
             "<img src='http://34.207.240.31/static/area_graph.png' height='100' width='300'>]]>"
         npo.style.iconstyle.icon.href = \
             'http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png'
-        
+
         if floodedby > 0.3:
             npo.style.iconstyle.color = simplekml.Color.red
         elif 0 < floodedby <= 0.30:
@@ -166,7 +169,6 @@ def kmz(date):
         else:
             npo.style.iconstyle.color = simplekml.Color.green
     filename_ = date + ".kml"
-    print filename_
     return Response(kml.kml(), mimetype='application/kml', headers={"Content disposition": "attachment; filename=" + filename_, "Content-Type": "application/kml"})
 
 
