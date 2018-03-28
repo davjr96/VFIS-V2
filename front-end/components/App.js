@@ -3,7 +3,8 @@ import {
   BrowserRouter as Router,
   Route,
   NavLink,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { connect } from "react-redux";
@@ -20,6 +21,7 @@ import Map from "./Map";
 import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
+import RegisterComponent from "./Register";
 
 const Login = userIsNotAuthenticatedRedir(LoginComponent);
 const ProtectedMap = userIsAuthenticatedRedir(Map);
@@ -73,8 +75,14 @@ function App({ user, logout }) {
         <div>
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
-
           <Route path="/login" component={Login} />
+          <Route
+            exact
+            path="/register"
+            render={() =>
+              user.data != null ? <Redirect to="/" /> : <RegisterComponent />
+            }
+          />
         </div>
       </div>
     </Router>

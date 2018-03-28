@@ -56,18 +56,20 @@ def verify_password(email, password):
 
 @app.route('/api/user', methods=['POST'])
 def new_user():
-    email = request.json.get('username')
+    userData = request.json
     password = request.json.get('password')
-    if username is None or password is None:
-        abort(400)    # missing arguments
-    if User.query.filter_by(email=email).first() is not None:
+    if userData['access'] !=  "UVAHYDRO":
+        abort(401)
+    del userData['password']
+    del userData['access']
+    userData['role'] = "user"
+    if User.query.filter_by(email=userData['email']).first() is not None:
         abort(400)    # existing user
-    user = User(email=email)
+    user = User(**request.json)
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    return (jsonify({'email': user.email}), 201,
-            {'Location': url_for('get_user', id=user.id, _external=True)})
+    return jsonify({"status": "OK"}), 201
 
 
 @app.route('/api/user')
