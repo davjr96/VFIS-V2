@@ -40,10 +40,13 @@ export class LoginContainer extends Component {
       .then(
         function(response) {
           if (response.status == 200) {
-            this.props.login({
-              user: this.refs.email.value.toLowerCase(),
-              pass: this.refs.password.value
-            });
+            response.json().then(
+              function(data) {
+                this.props.login({
+                  token: data.token
+                });
+              }.bind(this)
+            );
           } else {
             this.setState({
               notification: true,

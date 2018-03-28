@@ -41,15 +41,35 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
+    def generate_auth_token(self, expiration = 600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+        return s.dumps({ 'id': self.id })
+
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['id'])
+        return user
+
+
 @auth.verify_password
-def verify_password(email, password):
-    # try to authenticate with username/password
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.verify_password(password):
-        return False
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(email=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
     g.user = user
     return True
 
@@ -69,7 +89,8 @@ def new_user():
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    return jsonify({"status": "OK"}), 201
+    token = user.generate_auth_token()
+    return jsonify({ "status": "OK",'token': token.decode('ascii') }), 201
 
 
 @app.route('/api/user')
@@ -80,12 +101,11 @@ def get_user():
         abort(400)
     return jsonify(user.as_dict())
 
-
 @app.route('/api/login')
 @auth.login_required
 def get_auth_token():
-    return jsonify({"status": "OK"}), 200
-
+    token = g.user.generate_auth_token()
+    return jsonify({ "status": "OK",'token': token.decode('ascii') }), 200
 
 class Constructions(db.Model):
     __tablename__ = 'constructions'

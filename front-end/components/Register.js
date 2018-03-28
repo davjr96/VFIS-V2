@@ -47,10 +47,13 @@ export class RegisterContainer extends Component {
       .then(
         function(data) {
           if (data.status == 201) {
-            this.props.login({
-              user: this.refs.email.value.toLowerCase(),
-              pass: this.refs.password.value
-            });
+            data.json().then(
+              function(response) {
+                this.props.login({
+                  token: response.token
+                });
+              }.bind(this)
+            );
           } else if (data.status == 401) {
             this.setState({
               notification: true,

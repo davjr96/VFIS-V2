@@ -30,8 +30,7 @@ class DateComponent extends Component {
 
     headers.append(
       "Authorization",
-      "Basic " +
-        base64.encode(this.props.authData.user + ":" + this.props.authData.pass)
+      "Basic " + base64.encode(this.props.authData.token + ":x")
     );
 
     fetch("/api/dates", {
