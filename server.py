@@ -117,6 +117,10 @@ class Constructions(db.Model):
     roadelev = db.Column(db.Float)
     forecasts = db.relationship("Forecast")
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 
 class Forecast(db.Model):
     __tablename__ = 'forecasts'
@@ -129,11 +133,18 @@ class Forecast(db.Model):
         db.Integer, db.ForeignKey('constructions.fedid'))
     run_date_time = db.Column(db.String)
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
 
 @app.route('/api/bridges/<date>')
 @auth.login_required
 def bridges(date):
     rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
+    if rows == []:
+        rows = Constructions.query.all()
+        return json.dumps([row.as_dict() for row in rows])
     return json.dumps([row._asdict() for row in rows])
 
 

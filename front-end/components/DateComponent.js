@@ -41,6 +41,14 @@ class DateComponent extends Component {
         return response.json();
       })
       .then(json => {
+        var latest = moment.utc(json.dates[0], "YYYYMMDD-HHmmss").local();
+        if (latest.isBefore(moment().subtract(1, "hour"))) {
+          json.dates.unshift(
+            moment(new Date())
+              .utc()
+              .format("YYYYMMDD-HHmmss")
+          );
+        }
         this.setState({
           dates: json.dates,
           date: json.dates[0]
