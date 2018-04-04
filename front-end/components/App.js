@@ -27,7 +27,7 @@ const Login = userIsNotAuthenticatedRedir(LoginComponent);
 const ProtectedMap = userIsAuthenticatedRedir(Map);
 const ProtectedTable = userIsAuthenticatedRedir(Table);
 
-const LoginOnlyNav = userIsAuthenticated(({ logout }) => (
+const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
   <nav className="navbar navbar-expand-lg navbar-light">
     <LinkContainer to="/">
       <a className="navbar-brand">VFIS</a>
@@ -59,6 +59,11 @@ const LoginOnlyNav = userIsAuthenticated(({ logout }) => (
             <a className=" nav-link">Table</a>
           </LinkContainer>
         </li>
+        <li className="nav-item">
+          <a className="nav-link" href={"/api/kml/" + user.date}>
+            Download KML
+          </a>
+        </li>
       </ul>
       <a className="nav-item nav-link" onClick={() => logout()}>
         Logout
@@ -71,7 +76,7 @@ function App({ user, logout }) {
   return (
     <Router>
       <div>
-        <LoginOnlyNav logout={logout} />
+        <LoginOnlyNav user={user} logout={logout} />
         <div>
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />

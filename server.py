@@ -4,7 +4,7 @@ import simplekml
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as pwd_context
-from itsdangerous import (TimedJSONWebSignatureSerializer
+from itsdangerous import (JSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 import json
 # Set Up Flask Constants and Login
@@ -41,8 +41,8 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration = 600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in = expiration)
+    def generate_auth_token(self, expiration = None):
+        s = Serializer(app.config['SECRET_KEY'])
         return s.dumps({ 'id': self.id })
 
     def as_dict(self):
@@ -156,16 +156,21 @@ def dates():
     return jsonify({"dates": rows[::-1]})
 
 
-@app.route('/api/kmz/<date>')
-@auth.login_required
+@app.route('/api/kml/<date>')
 def kmz(date):
     rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
     ret = []
+    for row in rows:
+        ret.append(row._asdict())
+    if rows == []:
+        rows = Constructions.query.all()
+        for row in rows:
+            ret.append(row.as_dict())
+
     kml = simplekml.Kml()
     kml.document.name = "Bridge locations"
 
-    for row in rows:
-        ret.append(row._asdict())
+
 
     for bridge in ret:
         xcord = bridge['xcord']
@@ -174,8 +179,13 @@ def kmz(date):
         stream = bridge['stream']
         fedid = bridge['fedid']
         roadelev = bridge['roadelev']
-        MaxWL = bridge['maxwl']
-        floodedby = bridge['floodedby']
+        try:
+            MaxWL = bridge['maxwl']
+            floodedby = bridge['floodedby']
+        except:
+            MaxWL = 0
+            floodedby = 0
+
 
         if MaxWL == -999.0:
             MaxWL = 0.0
@@ -202,7 +212,7 @@ def kmz(date):
         else:
             npo.style.iconstyle.color = simplekml.Color.green
     filename_ = date + ".kml"
-    return Response(kml.kml(), mimetype='application/kml', headers={"Content disposition": "attachment; filename=" + filename_, "Content-Type": "application/kml"})
+    return Response(kml.kml(), mimetype='application/kml', headers={"Content-disposition": "attachment; filename=" + filename_, "Content-Type": "application/kml"})
 
 
 if __name__ == "__main__":
