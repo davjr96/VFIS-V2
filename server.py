@@ -1,64 +1,18 @@
 from flask import Flask, jsonify, render_template, Response, request, g, url_for, abort
 import constants
 import simplekml
-from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
-from passlib.apps import custom_app_context as pwd_context
-from itsdangerous import (JSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
 import json
+from models import User, Constructions, Forecast, db
+
 # Set Up Flask Constants and Login
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://" + constants.user + \
     ":" + constants.password + "@" + constants.host + ":5432/postgres"
-app.config['SECRET_KEY'] = 'dfjkahfjkldahfajklhdlash'
 app.debug = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db.init_app(app)
 auth = HTTPBasicAuth()
-
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(32), index=True)
-    password_hash = db.Column(db.String(64))
-    first_name = db.Column(db.String())
-    middle_name = db.Column(db.String())
-    last_name = db.Column(db.String())
-    organization = db.Column(db.String())
-    title = db.Column(db.String())
-    subject_areas = db.Column(db.String())
-    role = db.Column(db.String())
-    country = db.Column(db.String())
-    state_province = db.Column(db.String())
-    phone_number = db.Column(db.String())
-    website = db.Column(db.String())
-
-    def hash_password(self, password):
-        self.password_hash = pwd_context.encrypt(password)
-
-    def verify_password(self, password):
-        return pwd_context.verify(password, self.password_hash)
-
-    def generate_auth_token(self, expiration = None):
-        s = Serializer(app.config['SECRET_KEY'])
-        return s.dumps({ 'id': self.id })
-
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-    @staticmethod
-    def verify_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None # valid token, but expired
-        except BadSignature:
-            return None # invalid token
-        user = User.query.get(data['id'])
-        return user
 
 
 @auth.verify_password
@@ -107,37 +61,6 @@ def get_auth_token():
     token = g.user.generate_auth_token()
     return jsonify({ "status": "OK",'token': token.decode('ascii') }), 200
 
-class Constructions(db.Model):
-    __tablename__ = 'constructions'
-    fedid = db.Column(db.String, primary_key=True)
-    roadname = db.Column(db.String)
-    xcord = db.Column(db.Float)
-    ycord = db.Column(db.Float)
-    stream = db.Column(db.String)
-    roadelev = db.Column(db.Float)
-    forecasts = db.relationship("Forecast")
-
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-
-class Forecast(db.Model):
-    __tablename__ = 'forecasts'
-    id = db.Column(db.Integer, primary_key=True)
-    start_date = db.Column(db.String)
-    maxwl = db.Column(db.Float)
-    floodedby = db.Column(db.Float)
-    end_date = db.Column(db.String)
-    construction_fed_id = db.Column(
-        db.Integer, db.ForeignKey('constructions.fedid'))
-    run_date_time = db.Column(db.String)
-
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-
 @app.route('/api/bridges/<date>')
 @auth.login_required
 def bridges(date):
@@ -169,8 +92,6 @@ def kmz(date):
 
     kml = simplekml.Kml()
     kml.document.name = "Bridge locations"
-
-
 
     for bridge in ret:
         xcord = bridge['xcord']
