@@ -10,6 +10,9 @@ class AlertView extends Component {
     super(props);
     this.loadBridges = this.loadBridges.bind(this);
     this.loadAlerts = this.loadAlerts.bind(this);
+    this.addAlerts = this.addAlerts.bind(this);
+    this.deleteAlerts = this.deleteAlerts.bind(this);
+
     this.toggleRow = this.toggleRow.bind(this);
 
     this.state = {
@@ -35,8 +38,10 @@ class AlertView extends Component {
   toggleRow(fedid) {
     let selected = this.state.selected;
     if (selected.has(fedid)) {
+      this.deleteAlerts([fedid]);
       selected.delete(fedid);
     } else {
+      this.addAlerts([fedid]);
       selected.add(fedid);
     }
     this.setState({
@@ -53,11 +58,18 @@ class AlertView extends Component {
         newSelected.add(x.fedid);
       });
     }
-
-    this.setState({
-      selected: newSelected,
-      selectAll: this.state.selectAll === 0 ? 1 : 0
-    });
+    if (newSelected.size == 0) {
+      this.deleteAlerts([...this.state.selected]);
+    }
+    this.setState(
+      {
+        selected: newSelected,
+        selectAll: this.state.selectAll === 0 ? 1 : 0
+      },
+      () => {
+        this.addAlerts([...this.state.selected]);
+      }
+    );
   }
 
   loadBridges() {
@@ -118,15 +130,52 @@ class AlertView extends Component {
         json.forEach(x => {
           newSelected.add(x.fedid);
         });
-
         this.setState({
           selected: newSelected,
-          selectAll: 2
+          selectAll: newSelected.size === 0 ? 0 : 2
         });
       })
       .catch(function(ex) {
         console.log("parsing failed", ex);
       });
+  }
+
+  addAlerts(x) {
+    let headers = new Headers();
+    headers.append(
+      "Authorization",
+      "Basic " + base64.encode(this.props.authData.token + ":x"),
+      ("Content-Type": "application/json")
+    );
+    fetch("/api/alerts", {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({ constructions: x }),
+      json: true
+    }).then(
+      function(response) {
+        this.loadAlerts();
+      }.bind(this)
+    );
+  }
+
+  deleteAlerts(x) {
+    let headers = new Headers();
+    headers.append(
+      "Authorization",
+      "Basic " + base64.encode(this.props.authData.token + ":x"),
+      ("Content-Type": "application/json")
+    );
+    fetch("/api/alerts", {
+      method: "DELETE",
+      headers: headers,
+      body: JSON.stringify({ constructions: x }),
+      json: true
+    }).then(
+      function(response) {
+        this.loadAlerts();
+      }.bind(this)
+    );
   }
 
   componentDidMount() {

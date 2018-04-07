@@ -87,19 +87,28 @@ def dates():
 @auth.login_required
 def set_alerts():
     user_id =  g.user.id
-    constructions = request.json.get("constructions")
+    constructions = json.loads(request.data)["constructions"]
     for item in constructions:
         alert = Alert(constructions_fedid = float(item), users_id = user_id)
         db.session.add(alert)
         db.session.commit()
+    return Response(status=201)
 
-    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
-    return json.dumps([row._asdict() for row in rows])
+@app.route('/api/alerts', methods=['DELETE'])
+@auth.login_required
+def delete_alerts():
+    user_id =  g.user.id
+    constructions = json.loads(request.data)["constructions"]
+    for item in constructions:
+        Alert.query.filter_by(constructions_fedid = str(float(item)), users_id = user_id ).delete()
+        db.session.commit()
+    return Response(status=202)
 
 @app.route('/api/alerts')
 @auth.login_required
 def get_alerts():
-    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
+    user_id =  g.user.id
+    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).filter(Alert.users_id == user_id).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
     return json.dumps([row._asdict() for row in rows])
 
 
