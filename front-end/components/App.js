@@ -22,10 +22,12 @@ import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
 import RegisterComponent from "./Register";
+import Alert from "./Alert";
 
 const Login = userIsNotAuthenticatedRedir(LoginComponent);
 const ProtectedMap = userIsAuthenticatedRedir(Map);
 const ProtectedTable = userIsAuthenticatedRedir(Table);
+const ProtectedAlert = userIsAuthenticatedRedir(Alert);
 
 const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
   <nav className="navbar navbar-expand-lg navbar-light">
@@ -60,6 +62,11 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
           </LinkContainer>
         </li>
         <li className="nav-item">
+          <LinkContainer to="/alert">
+            <a className=" nav-link">Register for Alerts</a>
+          </LinkContainer>
+        </li>
+        <li className="nav-item">
           <a className="nav-link" href={"/api/kml/" + user.date}>
             Download KML
           </a>
@@ -80,6 +87,8 @@ function App({ user, logout }) {
         <div>
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
+          <Route exact path="/alert" component={ProtectedAlert} />
+
           <Route path="/login" component={Login} />
           <Route
             exact

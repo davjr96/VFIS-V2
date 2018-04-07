@@ -69,6 +69,12 @@ def bridges(date):
         return json.dumps([row.as_dict() for row in rows])
     return json.dumps([row._asdict() for row in rows])
 
+@app.route('/api/bridges')
+@auth.login_required
+def get_bridges():
+    rows = Constructions.query.all()
+    return json.dumps([row.as_dict() for row in rows])
+
 
 @app.route('/api/dates')
 @auth.login_required
