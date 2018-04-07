@@ -3,7 +3,7 @@ import constants
 import simplekml
 from flask_httpauth import HTTPBasicAuth
 import json
-from models import User, Constructions, Forecast, db
+from models import Alert, User, Constructions, Forecast, db
 
 # Set Up Flask Constants and Login
 app = Flask(__name__)
@@ -46,7 +46,6 @@ def new_user():
     token = user.generate_auth_token()
     return jsonify({ "status": "OK",'token': token.decode('ascii') }), 201
 
-
 @app.route('/api/user')
 @auth.login_required
 def get_user():
@@ -77,6 +76,25 @@ def dates():
     rows = Forecast.query.distinct(Forecast.run_date_time)
     rows = [r.run_date_time for r in rows]
     return jsonify({"dates": rows[::-1]})
+
+@app.route('/api/alerts', methods=['POST'])
+@auth.login_required
+def set_alerts():
+    user_id =  g.user.id
+    constructions = request.json.get("constructions")
+    for item in constructions:
+        alert = Alert(constructions_fedid = float(item), users_id = user_id)
+        db.session.add(alert)
+        db.session.commit()
+
+    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
+    return json.dumps([row._asdict() for row in rows])
+
+@app.route('/api/alerts')
+@auth.login_required
+def get_alerts():
+    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
+    return json.dumps([row._asdict() for row in rows])
 
 
 @app.route('/api/kml/<date>')

@@ -5,6 +5,13 @@ from passlib.apps import custom_app_context as pwd_context
 
 db = SQLAlchemy()
 
+class Alert(db.Model):
+    __tablename__ = 'alerts'
+    id = db.Column(db.Integer, primary_key=True)
+    constructions_fedid = db.Column(
+        db.String(), db.ForeignKey('constructions.fedid'))
+    users_id = db.Column(
+        db.Integer, db.ForeignKey('users.id'))
 
 class User(db.Model):
     __tablename__ = 'users'
