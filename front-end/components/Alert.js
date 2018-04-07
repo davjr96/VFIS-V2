@@ -217,8 +217,7 @@ class AlertView extends Component {
           );
         },
         sortable: false,
-        width: 45,
-        filterAll: false
+        filterable: false
       },
       {
         Header: "Feature ID",

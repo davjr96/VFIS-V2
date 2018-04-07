@@ -108,7 +108,7 @@ def delete_alerts():
 @auth.login_required
 def get_alerts():
     user_id =  g.user.id
-    rows = db.session.query(Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).filter(Alert.users_id == user_id).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
+    rows = db.session.query(Constructions.fedid).filter(Alert.users_id == user_id).join(Alert, Alert.constructions_fedid == Constructions.fedid).all()
     return json.dumps([row._asdict() for row in rows])
 
 
