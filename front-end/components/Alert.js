@@ -200,7 +200,7 @@ class AlertView extends Component {
         },
         Header: x => {
           return (
-            <label>
+            <div>
               <input
                 type="checkbox"
                 className="checkbox"
@@ -213,10 +213,9 @@ class AlertView extends Component {
                 onChange={() => this.toggleSelectAll()}
               />
               Recieve Email Alert
-            </label>
+            </div>
           );
         },
-        sortable: false,
         filterable: false
       },
       {
@@ -260,6 +259,12 @@ class AlertView extends Component {
         <ReactTable
           className="table -striped -highlight"
           defaultPageSize={15}
+          defaultSorted={[
+            {
+              id: "checkbox",
+              desc: true
+            }
+          ]}
           data={this.state.bridges}
           columns={columns}
           defaultFilterMethod={(filter, row) =>

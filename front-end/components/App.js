@@ -61,17 +61,16 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
             <a className=" nav-link">Table</a>
           </LinkContainer>
         </li>
-        <li className="nav-item">
-          <LinkContainer to="/alert">
-            <a className=" nav-link">Register for Alerts</a>
-          </LinkContainer>
-        </li>
+
         <li className="nav-item">
           <a className="nav-link" href={"/api/kml/" + user.date}>
             Download KML
           </a>
         </li>
       </ul>
+      <LinkContainer to="/alert">
+        <a className=" nav-item nav-link">Register for Alerts</a>
+      </LinkContainer>
       <a className="nav-item nav-link" onClick={() => logout()}>
         Logout
       </a>
