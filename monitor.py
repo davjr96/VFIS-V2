@@ -185,7 +185,9 @@ def data_monitor():
     if sum(max_precip_value) > threshold[4] and triggered is False:
         triggered = True
 
+    triggered = True
     if triggered and filename not in ran:
+        print "Starting Model Run"
         f = open('forecasts.txt', 'w')
         f.write(filename + '\n')
         f.close()
@@ -196,6 +198,6 @@ def data_monitor():
         print "Model not started"
 
 
-sched.add_job(data_monitor, 'interval', hours=1)
-sched.start()
-# data_monitor()
+# sched.add_job(data_monitor, 'interval', hours=1)
+# sched.start()
+data_monitor()
