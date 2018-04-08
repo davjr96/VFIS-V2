@@ -8,6 +8,7 @@ import paramiko
 import googleapiclient.discovery
 from apscheduler.schedulers.blocking import BlockingScheduler
 import constants
+import time
 
 compute = googleapiclient.discovery.build('compute', 'v1')
 sched = BlockingScheduler()
@@ -103,7 +104,7 @@ def runBatch(filename):
     print "cd " + constants.InstanceScriptLocation + " & " + constants.InstanceScript + " " + filename
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(constants.InstanceIP, username=constants.InstanceUser, password=constants.InstancePass)
+    ssh.connect(InstanceIP, username=constants.InstanceUser, password=constants.InstancePass)
     ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(
         "cd " + constants.InstanceScriptLocation + " & " +  constants.InstanceScript + " " + filename)
     print ssh_stdout.readlines()
