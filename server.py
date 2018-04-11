@@ -7,7 +7,6 @@ from models import Alert, User, Constructions, Forecast, db
 import pandas as pd
 from datetime import datetime as dt, timedelta
 import time
-from bson import json_util
 from google.cloud import storage
 import os
 
