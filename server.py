@@ -4,6 +4,12 @@ import simplekml
 from flask_httpauth import HTTPBasicAuth
 import json
 from models import Alert, User, Constructions, Forecast, db
+import pandas as pd
+from datetime import datetime as dt, timedelta
+import time
+from bson import json_util
+from google.cloud import storage
+import os
 
 # Set Up Flask Constants and Login
 app = Flask(__name__)
@@ -167,6 +173,37 @@ def kmz(date):
             npo.style.iconstyle.color = simplekml.Color.green
     filename_ = date + ".kml"
     return Response(kml.kml(), mimetype='application/kml', headers={"Content-disposition": "attachment; filename=" + filename_, "Content-Type": "application/kml"})
+
+@app.route("/api/timeseries")
+def timeseries():
+    date = request.args.get('date')
+    construction = request.args.get('construction')
+
+    filename = date+".csv"
+    try:
+        storage_client = storage.Client("flood-warning-system")
+        bucket = storage_client.get_bucket('flood-warning-archive')
+        blob = bucket.blob("timeseries/"+filename)
+        csv = blob.download_to_filename(filename)
+    except:
+        os.remove(filename)
+        abort(404)
+
+    data = pd.read_csv(filename, skiprows=1)
+    data = data.drop(data.columns[[0]], axis=1)
+    os.remove(filename)
+
+
+    ret = []
+    roadelev = Constructions.query.filter_by(fedid=str(float(construction))).first().roadelev
+
+    for index, row in data[construction].iteritems():
+        timeval = dt.strptime(date, "%Y%m%d-%H%M%S") + timedelta(hours=data['Time'].get(index))
+        timeval = timeval.strftime("%Y%m%d-%H%M%S")
+        val = {'y': row, 'x': timeval, 'roadelev' : roadelev}
+        ret.append(val)
+
+    return json.dumps(ret)
 
 
 if __name__ == "__main__":

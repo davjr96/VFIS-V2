@@ -17,6 +17,8 @@
     "react-router-dom": "^4.1.1",
     "react-select": "^1.2.1",
     "react-table": "^6.5.1",
+    "react-vis": "^1.9.2",
+    "recharts": "^1.0.0-beta.10",
     "redux": "3.6.0",
     "redux-auth-wrapper": "^2.0.1",
     "redux-persist": "^5.9.1",

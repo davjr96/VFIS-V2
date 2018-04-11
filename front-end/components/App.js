@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Route,
   NavLink,
   Link,
@@ -18,6 +18,8 @@ import {
 } from "../auth";
 
 import Map from "./Map";
+import Detail from "./Detail";
+
 import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
@@ -26,6 +28,7 @@ import Alert from "./Alert";
 
 const Login = userIsNotAuthenticatedRedir(LoginComponent);
 const ProtectedMap = userIsAuthenticatedRedir(Map);
+const ProtectedDetail = userIsAuthenticatedRedir(Detail);
 const ProtectedTable = userIsAuthenticatedRedir(Table);
 const ProtectedAlert = userIsAuthenticatedRedir(Alert);
 
@@ -87,6 +90,11 @@ function App({ user, logout }) {
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
           <Route exact path="/alert" component={ProtectedAlert} />
+          <Route
+            exact
+            path="/timeseries/:id"
+            render={({ location }) => <ProtectedDetail location={location} />}
+          />
 
           <Route path="/login" component={Login} />
           <Route

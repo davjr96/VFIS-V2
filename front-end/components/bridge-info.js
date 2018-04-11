@@ -1,9 +1,10 @@
 import React, { PureComponent } from "react";
+import { Link } from "react-router-dom";
 
 export default class BridgeInfo extends PureComponent {
   render() {
     const { info } = this.props;
-
+    const id = Math.trunc(this.props.info.fedid);
     return (
       <div>
         <h4>{info.roadname}</h4>
@@ -40,6 +41,9 @@ export default class BridgeInfo extends PureComponent {
             </tr>
           </tbody>
         </table>
+        <Link to={`/timeseries/${id}`} className="btn btn-primary">
+          Details
+        </Link>
       </div>
     );
   }
