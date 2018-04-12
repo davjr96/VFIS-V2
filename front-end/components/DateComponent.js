@@ -93,7 +93,7 @@ class DateComponent extends Component {
     return (
       <div>
         <Select
-          className="form-inline nav-select"
+          className="navbar-item nav-select"
           value={this.state.selected}
           options={options}
           onChange={e => this.handleChange(e)}

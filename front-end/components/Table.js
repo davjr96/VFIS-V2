@@ -132,12 +132,18 @@ class TableView extends Component {
       }
     ];
     return (
-      <div className="TableView">
+      <div className="container is-fluid">
         <ReactTable
-          className="table -striped -highlight"
+          className="table is-bordered is-striped is-narrow is-fullwidth"
           defaultPageSize={15}
           data={this.state.bridges}
           columns={columns}
+          defaultSorted={[
+            {
+              id: "floodedby",
+              desc: true
+            }
+          ]}
           defaultFilterMethod={(filter, row) =>
             String(row[filter.id]) === filter.value
           }

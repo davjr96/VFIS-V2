@@ -8,7 +8,7 @@ export default class BridgeInfo extends PureComponent {
     return (
       <div>
         <h4>{info.roadname}</h4>
-        <table className="table">
+        <table className="table is-bordered is-striped is-narrow">
           <tbody>
             <tr>
               <td>Stream Crossed: </td>
@@ -33,7 +33,10 @@ export default class BridgeInfo extends PureComponent {
             </tr>
           </tbody>
         </table>
-        <Link to={`/timeseries/${id}`} className="btn btn-primary">
+        <Link
+          to={{ pathname: `/timeseries/${id}`, state: { info: info } }}
+          className="button is-link"
+        >
           Details
         </Link>
       </div>

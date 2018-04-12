@@ -3,76 +3,47 @@
   <head>
     <title>VFIS</title>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
     <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css"/>
     <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css"/>
     <meta charset="utf8"/>
     <style>
-    .form-group.required .col-form-label:after {
-      content:"*";
-      color:red;
+
+    html,
+    body {
+      font-family: "Open Sans", serif;
+      font-size: 14px;
+      font-weight: 300;
     }
-    .form-register {
-      max-width: 500px;
-      padding: 5px;
-      margin: 0 auto;
-      overflow: hidden;
+    .hero.is-success {
+      background: #f2f6fa;
     }
-    .margin-bottom {
-      margin-bottom:5px;
+    .hero .nav,
+    .hero.is-success .nav {
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
+    .box {
+      margin-top: 5rem;
     }
 
-    .form-signin {
-      max-width: 330px;
-      padding: 15px;
-      margin: 0 auto;
+    input {
+      font-weight: 300;
     }
-    .form-signin .form-signin-heading,
-    .form-signin .checkbox {
-      margin-bottom: 10px;
+    p {
+      font-weight: 700;
     }
-    .form-signin .checkbox {
-      font-weight: normal;
+    p.subtitle {
+      padding-top: 1rem;
     }
-    .form-signin .form-control {
-      position: relative;
-      height: auto;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      padding: 10px;
-      font-size: 16px;
-    }
-    .form-signin .form-control:focus {
-      z-index: 2;
-    }
-    .form-signin input[type="email"] {
-      margin-bottom: -1px;
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-    .form-signin input[type="password"] {
-      margin-bottom: 10px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-    .form-signin-div {
-      padding-top: 40px;
-      padding-bottom: 40px;
-      background-color: #eee;
-    }
-    body {
-      margin: 0;
-      background: #eee;
-    }
+
 
     .nav-select {
       width: 500px;
     }
-    .navbar {
-      background-color: #e3f2fd;
-    }
+
     .legend {
       position: absolute;
       top: 0;

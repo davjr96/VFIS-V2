@@ -33,50 +33,49 @@ const ProtectedTable = userIsAuthenticatedRedir(Table);
 const ProtectedAlert = userIsAuthenticatedRedir(Alert);
 
 const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
-  <nav className="navbar navbar-expand-lg navbar-light">
+  <nav className="navbar">
     <LinkContainer to="/">
-      <a className="navbar-brand">VFIS</a>
-    </LinkContainer>{" "}
-    <button
-      className="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span className="navbar-toggler-icon" />
-    </button>
-    <div className="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul className="navbar-nav mr-auto">
-        <li className="nav-item">
+      <div className="navbar-brand">
+        <a className="navbar-item">VFIS</a>
+      </div>
+    </LinkContainer>
+    <div className="navbar-menu">
+      <div className="navbar-start">
+        <div className="nav-item">
           <DateComponent />
-        </li>
-        <li className="nav-item">
-          <LinkContainer to="/">
-            <a className=" nav-link">Map</a>
-          </LinkContainer>
-        </li>
+        </div>
+        <LinkContainer to="/">
+          <a className="navbar-item">Map</a>
+        </LinkContainer>
 
-        <li className="nav-item">
-          <LinkContainer to="/table">
-            <a className=" nav-link">Table</a>
-          </LinkContainer>
-        </li>
+        <LinkContainer to="/table">
+          <a className="navbar-item">Table</a>
+        </LinkContainer>
 
-        <li className="nav-item">
-          <a className="nav-link" href={"/api/kml/" + user.date}>
-            Download KML
-          </a>
-        </li>
-      </ul>
-      <LinkContainer to="/alert">
-        <a className=" nav-item nav-link">Register for Alerts</a>
-      </LinkContainer>
-      <a className="nav-item nav-link" onClick={() => logout()}>
-        Logout
-      </a>
+        <div className="navbar-item has-dropdown is-hoverable">
+          <p className="navbar-link">Utilities</p>
+          <div className="navbar-dropdown is-boxed">
+            <a className="navbar-item" href={"/api/kml/" + user.date}>
+              Download KML
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="navbar-end">
+        <div className="navbar-item has-dropdown is-hoverable is-right">
+          <span className="navbar-link">
+            <i className="fas fa-user" />
+          </span>
+          <div className="navbar-dropdown is-boxed is-right">
+            <LinkContainer to="/alert">
+              <a className="navbar-item">Register for Alerts</a>
+            </LinkContainer>
+            <a className="navbar-item" onClick={() => logout()}>
+              Logout
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 ));

@@ -255,9 +255,9 @@ class AlertView extends Component {
       }
     ];
     return (
-      <div className="TableView">
+      <div className="container is-fluid">
         <ReactTable
-          className="table -striped -highlight"
+          className="table is-bordered is-striped is-narrow is-fullwidth"
           defaultPageSize={15}
           defaultSorted={[
             {

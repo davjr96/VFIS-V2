@@ -51,7 +51,7 @@ export class LoginContainer extends Component {
             this.setState({
               notification: true,
               notificationText: "The username or password is incorrect.",
-              notificationType: "alert alert-danger"
+              notificationType: "notification is-danger"
             });
           }
         }.bind(this)
@@ -65,47 +65,62 @@ export class LoginContainer extends Component {
     const message = this.state.notificationText;
     const type = this.state.notificationType;
     return (
-      <div className="container form-signin-div">
-        {this.state.notification ? (
-          <div className={type} role="alert">
-            {message}
+      <section className="hero is-success is-fullheight">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            <div className="column is-4 is-offset-4">
+              <h3 className="title has-text-grey">Login</h3>
+              <p className="subtitle has-text-grey">Please login to proceed.</p>
+              <div className="box">
+                {this.state.notification ? (
+                  <div className={type}>{message}</div>
+                ) : null}
+                <form onSubmit={this.loginFunc} method="post">
+                  <div className="field">
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        name="email"
+                        type="email"
+                        ref="email"
+                        id="inputEmail"
+                        placeholder="Email address"
+                        required
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  <div className="field">
+                    <div className="control">
+                      <input
+                        className="input is-large"
+                        name="item"
+                        type="password"
+                        ref="password"
+                        id="inputPassword"
+                        placeholder="Password"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="field">
+                    <div className="control">
+                      <button className="button is-block is-info is-large is-fullwidth">
+                        Login
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <p className="has-text-grey">
+                <LinkContainer to="/register">
+                  <a>Register</a>
+                </LinkContainer>
+              </p>
+            </div>
           </div>
-        ) : null}
-        <form className="form-signin" onSubmit={this.loginFunc} method="post">
-          <h2 className="form-signin-heading">Please sign in</h2>
-          <label htmlFor="inputEmail" className="sr-only">
-            Email address
-          </label>
-          <input
-            className="input"
-            name="email"
-            type="email"
-            ref="email"
-            id="inputEmail"
-            className="form-control"
-            placeholder="Email address"
-            required
-            autoFocus
-          />
-          <label htmlFor="inputPassword" className="sr-only">
-            Password
-          </label>
-          <input
-            className="input"
-            name="item"
-            type="password"
-            ref="password"
-            id="inputPassword"
-            className="form-control"
-            placeholder="Password"
-            required
-          />
-          <button className="btn btn-lg btn-primary btn-block">Login</button>
-          <LinkContainer to="/register">
-            <a>Register</a>
-          </LinkContainer>
-        </form>
-      </div>
+        </div>
+      </section>
     );
   }
 }

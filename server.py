@@ -174,6 +174,7 @@ def kmz(date):
     return Response(kml.kml(), mimetype='application/kml', headers={"Content-disposition": "attachment; filename=" + filename_, "Content-Type": "application/kml"})
 
 @app.route("/api/timeseries")
+@auth.login_required
 def timeseries():
     date = request.args.get('date')
     construction = request.args.get('construction')

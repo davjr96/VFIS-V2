@@ -25,7 +25,8 @@ class Detail extends Component {
     this.loadtimeseries = this.loadtimeseries.bind(this);
     this.state = {
       series: [],
-      display: true
+      display: true,
+      construction: {}
     };
   }
 
@@ -62,6 +63,11 @@ class Detail extends Component {
   }
 
   componentDidMount() {
+    const { info } = this.props.location.state;
+    console.log(info);
+    this.setState({
+      construction: info
+    });
     this.loadtimeseries(
       this.props.date,
       this.props.location.pathname.split("/")[2]
@@ -76,9 +82,51 @@ class Detail extends Component {
   }
   render() {
     const display = this.state.display;
-
+    const info = this.state.construction;
     return (
-      <div className="container-fluid">
+      <section className="section">
+        <div className="container has-text-centered	">
+          <h1 className="title"> {info.roadname}</h1>
+        </div>
+
+        <div className="container">
+          <table className="table is-narrow">
+            <tbody>
+              <tr>
+                <td>Stream Crossed: </td>
+                <td> {info.stream}</td>
+              </tr>
+              <tr>
+                <td>Bridge Elevation (m): </td>
+                <td> {info.roadelev} </td>
+              </tr>
+              <tr>
+                <td>
+                  <b>Forecasted Overtopping Results from Model</b>
+                </td>
+              </tr>
+              <tr>
+                <td>Maximum Water Level (m):</td>
+                <td> {info.maxwl}</td>
+              </tr>
+              <tr>
+                <td>Bridge Overtopped by (m):</td>
+                <td> {info.floodedby} </td>
+              </tr>
+              <tr>
+                <td>Overtopping Starting Date/Time:</td>
+                <td>{info.start_date} </td>
+              </tr>
+              <tr>
+                <td>Overtopping Ending Date/Time:</td>
+                <td> {info.end_date} </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="container has-text-centered	">
+          <h1 className="title"> Time Series Graph</h1>
+        </div>
         {display ? (
           <ResponsiveContainer width="95%" height={500}>
             <ComposedChart data={this.state.series}>
@@ -121,9 +169,17 @@ class Detail extends Component {
             </ComposedChart>
           </ResponsiveContainer>
         ) : (
-          <h1> No Time Series Values available for this dataset </h1>
+          <div className="container">
+            <div className="notification">
+              <article className="message is-primary is-danger">
+                <div className="message-body">
+                  <h1> No Time Series Values available for this dataset </h1>
+                </div>
+              </article>
+            </div>
+          </div>
         )}
-      </div>
+      </section>
     );
   }
 }

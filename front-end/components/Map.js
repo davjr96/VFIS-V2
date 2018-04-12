@@ -138,7 +138,7 @@ class Map extends Component {
 
     return (
       <div>
-        <div className="Map">
+        <div className="container-fluid Map">
           <div>
             <MapGL
               {...viewport}

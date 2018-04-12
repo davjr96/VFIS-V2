@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "base-64": "^0.1.0",
+    "bulma": "^0.6.2",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.4",
     "match-sorter": "^1.8.0",
