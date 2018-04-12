@@ -33,10 +33,7 @@ export default class BridgeInfo extends PureComponent {
             </tr>
           </tbody>
         </table>
-        <Link
-          to={{ pathname: `/timeseries/${id}`, state: { info: info } }}
-          className="button is-link"
-        >
+        <Link to={{ pathname: `/timeseries/${id}` }} className="button is-link">
           Details
         </Link>
       </div>

@@ -89,11 +89,7 @@ function App({ user, logout }) {
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
           <Route exact path="/alert" component={ProtectedAlert} />
-          <Route
-            exact
-            path="/timeseries/:id"
-            render={({ location }) => <ProtectedDetail location={location} />}
-          />
+          <Route path="/timeseries/:id" component={ProtectedDetail} />
 
           <Route path="/login" component={Login} />
           <Route

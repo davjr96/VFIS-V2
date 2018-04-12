@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import base64 from "base-64";
 import "../node_modules/react-vis/dist/style.css";
 import moment from "moment";
-
+import { withRouter } from "react-router-dom";
+import createReactClass from "create-react-class";
 import {
   CartesianGrid,
   Legend,
@@ -23,9 +24,11 @@ class Detail extends Component {
   constructor(props) {
     super(props);
     this.loadtimeseries = this.loadtimeseries.bind(this);
+    this.loadBridge = this.loadBridge.bind(this);
+
     this.state = {
       series: [],
-      display: true,
+      display: false,
       construction: {}
     };
   }
@@ -62,27 +65,72 @@ class Detail extends Component {
       });
   }
 
-  componentDidMount() {
-    const { info } = this.props.location.state;
-    console.log(info);
-    this.setState({
-      construction: info
-    });
-    this.loadtimeseries(
-      this.props.date,
-      this.props.location.pathname.split("/")[2]
+  loadBridge(date, construction) {
+    let headers = new Headers();
+
+    headers.append(
+      "Authorization",
+      "Basic " + base64.encode(this.props.authData.token + ":x")
     );
+
+    fetch("/api/bridges/" + date + "?construction=" + construction, {
+      method: "GET",
+      headers: headers
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(json => {
+        this.setState({
+          construction: json
+        });
+      })
+      .catch(function(ex) {
+        console.log("parsing failed", ex);
+      });
+  }
+
+  componentDidMount() {
+    this.loadtimeseries(this.props.date, this.props.match.params.id);
+    this.loadBridge(this.props.date, this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.loadtimeseries(
-      nextProps.date,
-      nextProps.location.pathname.split("/")[2]
-    );
+    this.loadtimeseries(nextProps.date, nextProps.match.params.id);
+    this.loadBridge(nextProps.date, nextProps.match.params.id);
   }
+
   render() {
     const display = this.state.display;
     const info = this.state.construction;
+    const data = this.state.series;
+
+    const off = info.roadelev / 100;
+
+    const CustomizedAxisTick = createReactClass({
+      render() {
+        const { x, y, stroke, payload } = this.props;
+
+        return (
+          <g transform={`translate(${x},${y})`}>
+            <text
+              x={0}
+              y={0}
+              dy={16}
+              textAnchor="end"
+              fill="#666"
+              transform="rotate(-45)"
+            >
+              {moment
+                .utc(payload.value, "YYYYMMDD-HHmmss")
+                .local()
+                .format("MMMM Do YYYY, h:mm a")}
+            </text>
+          </g>
+        );
+      }
+    });
+
     return (
       <section className="section">
         <div className="container has-text-centered	">
@@ -125,37 +173,36 @@ class Detail extends Component {
           </table>
         </div>
         <div className="container has-text-centered	">
-          <h1 className="title"> Time Series Graph</h1>
+          <h1 className="title">Expected Bridge Deck Condition</h1>
         </div>
         {display ? (
           <ResponsiveContainer width="95%" height={500}>
-            <ComposedChart data={this.state.series}>
+            <ComposedChart
+              data={data}
+              margin={{ top: 5, right: 30, left: 50, bottom: 100 }}
+            >
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                  <stop offset={off} stopColor="red" stopOpacity={1} />
+                  <stop offset={off} stopColor="#8884d8" stopOpacity={1} />
                 </linearGradient>
               </defs>
               <XAxis
                 dataKey="x"
                 domain={["auto", "auto"]}
                 name="Time"
-                tickFormatter={unixTime =>
-                  moment
-                    .utc(unixTime, "YYYYMMDD-HHmmss")
-                    .local()
-                    .format("MMMM Do YYYY, h a")
-                }
+                tick={<CustomizedAxisTick />}
+                interval={10}
               />
               <YAxis domain={["auto", "auto"]} />
+
               <CartesianGrid strokeDasharray="3 3" />
               <Legend verticalAlign="top" />
               <Tooltip />
               <Area
                 type="monotone"
                 dataKey="y"
-                stroke="#8884d8"
-                fillOpacity={1}
+                stroke="#000"
                 fill="url(#colorUv)"
                 name="Water Level"
               />
@@ -189,4 +236,4 @@ const mapStateToProps = state => ({
   authData: state.user.data
 });
 
-export default connect(mapStateToProps)(Detail);
+export default withRouter(connect(mapStateToProps)(Detail));

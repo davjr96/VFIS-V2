@@ -68,17 +68,32 @@ def get_auth_token():
 @app.route('/api/bridges/<date>')
 @auth.login_required
 def bridges(date):
-    rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
-    if rows == []:
-        rows = Constructions.query.all()
-        return json.dumps([row.as_dict() for row in rows])
-    return json.dumps([row._asdict() for row in rows])
+    construction = request.args.get('construction')
+    print construction
+    print date
+    if construction:
+        construction = str(float(construction))
+        row = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date, Constructions.fedid == construction).first()
+        if not row:
+            row = Constructions.query.filter_by(fedid=str(float(construction))).first()
+            print row.as_dict()
+            return json.dumps(row.as_dict())
+        print row._asdict()
+        return json.dumps(row._asdict())
+    else:
+        rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
+        if rows == []:
+            rows = Constructions.query.all()
+            return json.dumps([row.as_dict() for row in rows])
+
+        return json.dumps([row._asdict() for row in rows])
 
 @app.route('/api/bridges')
 @auth.login_required
 def get_bridges():
     rows = Constructions.query.all()
     return json.dumps([row.as_dict() for row in rows])
+
 
 
 @app.route('/api/dates')
