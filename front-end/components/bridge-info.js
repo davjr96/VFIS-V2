@@ -15,17 +15,9 @@ export default class BridgeInfo extends PureComponent {
               <td> {info.stream}</td>
             </tr>
             <tr>
-              <td>Bridge Elevation (m): </td>
-              <td> {info.roadelev} </td>
-            </tr>
-            <tr>
               <td>
                 <b>Forecasted Overtopping Results from Model</b>
               </td>
-            </tr>
-            <tr>
-              <td>Maximum Water Level (m):</td>
-              <td> {info.maxwl}</td>
             </tr>
             <tr>
               <td>Bridge Overtopped by (m):</td>

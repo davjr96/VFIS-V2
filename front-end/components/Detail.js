@@ -78,7 +78,7 @@ class Detail extends Component {
     const display = this.state.display;
 
     return (
-      <div className="container">
+      <div className="container-fluid">
         {display ? (
           <ResponsiveContainer width="95%" height={500}>
             <ComposedChart data={this.state.series}>
@@ -99,9 +99,10 @@ class Detail extends Component {
                     .format("MMMM Do YYYY, h a")
                 }
               />
-              <YAxis />
+              <YAxis domain={["auto", "auto"]} />
               <CartesianGrid strokeDasharray="3 3" />
               <Legend verticalAlign="top" />
+              <Tooltip />
               <Area
                 type="monotone"
                 dataKey="y"

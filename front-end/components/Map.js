@@ -9,7 +9,7 @@ import BridgeInfo from "./bridge-info";
 import Legend from "./legend";
 import "whatwg-fetch";
 
-const GREEN = "#00ff00";
+const GREEN = "#4cb947";
 const RED = "#ff0000";
 const YELLOW = "#ffff00";
 
