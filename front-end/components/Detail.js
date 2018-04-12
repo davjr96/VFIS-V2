@@ -29,7 +29,9 @@ class Detail extends Component {
     this.state = {
       series: [],
       display: false,
-      construction: {}
+      construction: {},
+      dataMax: 0,
+      dataMin: 0
     };
   }
 
@@ -52,12 +54,18 @@ class Detail extends Component {
             return response.json();
           } else {
             this.setState({ display: false });
+            return [{ x: 0, y: 0, roadelev: 0 }];
           }
         }.bind(this)
       )
       .then(json => {
+        const dataMax = Math.max(...json.map(i => i.y));
+        const dataMin = Math.min(...json.map(i => i.y));
+
         this.setState({
-          series: json
+          series: json,
+          dataMax: dataMax,
+          dataMin: dataMin
         });
       })
       .catch(function(ex) {
@@ -104,8 +112,23 @@ class Detail extends Component {
     const display = this.state.display;
     const info = this.state.construction;
     const data = this.state.series;
+    const max = this.state.dataMax;
+    const min = this.state.dataMin;
+    let breakpoint = 0;
+    let off = 0;
 
-    const off = info.roadelev / 100;
+    const gradientOffset = () => {
+      if (max <= info.roadelev) {
+        return 0;
+      } else if (min >= info.roadelev) {
+        return 1;
+      } else {
+        return Math.ceil((1 - (info.roadelev - min) / (max - min)) * 100) / 100;
+      }
+    };
+
+    off = gradientOffset();
+    console.log(off);
 
     const CustomizedAxisTick = createReactClass({
       render() {
@@ -179,7 +202,7 @@ class Detail extends Component {
           <ResponsiveContainer width="95%" height={500}>
             <ComposedChart
               data={data}
-              margin={{ top: 5, right: 30, left: 50, bottom: 100 }}
+              margin={{ top: 5, right: 30, left: 50, bottom: 120 }}
             >
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
