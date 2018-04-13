@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import base64 from "base-64";
-import "../node_modules/react-vis/dist/style.css";
 import moment from "moment";
 import { withRouter } from "react-router-dom";
 import createReactClass from "create-react-class";
@@ -99,13 +98,13 @@ class Detail extends Component {
   }
 
   componentDidMount() {
-    this.loadtimeseries(this.props.date, this.props.match.params.id);
     this.loadBridge(this.props.date, this.props.match.params.id);
+    this.loadtimeseries(this.props.date, this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.loadtimeseries(nextProps.date, nextProps.match.params.id);
     this.loadBridge(nextProps.date, nextProps.match.params.id);
+    this.loadtimeseries(nextProps.date, nextProps.match.params.id);
   }
 
   render() {
@@ -123,7 +122,7 @@ class Detail extends Component {
       } else if (min >= info.roadelev) {
         return 1;
       } else {
-        return Math.ceil((1 - (info.roadelev - min) / (max - min)) * 100) / 100;
+        return info.roadelev / 100;
       }
     };
 
