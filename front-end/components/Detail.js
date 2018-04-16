@@ -122,7 +122,7 @@ class Detail extends Component {
       } else if (min >= info.roadelev) {
         return 1;
       } else {
-        return info.roadelev / 100;
+        return (info.roadelev + 1) / 100;
       }
     };
 
