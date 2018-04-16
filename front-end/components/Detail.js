@@ -232,7 +232,7 @@ class Detail extends Component {
                 type="monotone"
                 dataKey="roadelev"
                 dot={false}
-                stroke="#ff0000"
+                stroke="#000000"
                 name="Road Elevation"
               />
             </ComposedChart>

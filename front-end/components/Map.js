@@ -11,7 +11,7 @@ import "whatwg-fetch";
 
 const GREEN = "#4cb947";
 const RED = "#ff0000";
-const YELLOW = "#ffff00";
+const YELLOW = "#FFA500";
 
 const navStyle = {
   position: "absolute",
