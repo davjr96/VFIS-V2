@@ -216,7 +216,7 @@ class Detail extends Component {
                 tick={<CustomizedAxisTick />}
                 interval={10}
               />
-              <YAxis domain={["auto", "auto"]} />
+              <YAxis domain={[info.roadelev - 1, "auto"]} />
 
               <CartesianGrid strokeDasharray="3 3" />
               <Legend verticalAlign="top" />
@@ -233,6 +233,7 @@ class Detail extends Component {
                 dataKey="roadelev"
                 dot={false}
                 stroke="#000000"
+                strokeWidth={5}
                 name="Road Elevation"
               />
             </ComposedChart>

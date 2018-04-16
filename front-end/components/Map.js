@@ -93,9 +93,9 @@ class Map extends Component {
 
   _renderBridgeMarker = (bridge, index) => {
     let color;
-    if (bridge.floodedby > 1) {
+    if (bridge.floodedby > 0.3) {
       color = RED;
-    } else if (bridge.floodedby < 1 && bridge.floodedby > 0.5) {
+    } else if (bridge.floodedby < 0.3 && bridge.floodedby > 0) {
       color = YELLOW;
     } else {
       color = GREEN;
