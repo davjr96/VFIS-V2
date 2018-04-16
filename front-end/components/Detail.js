@@ -122,7 +122,7 @@ class Detail extends Component {
       } else if (min >= info.roadelev) {
         return 1;
       } else {
-        return (info.roadelev + 1) / 100;
+        return info.roadelev / 100;
       }
     };
 
@@ -216,7 +216,7 @@ class Detail extends Component {
                 tick={<CustomizedAxisTick />}
                 interval={10}
               />
-              <YAxis domain={[info.roadelev - 1, "auto"]} />
+              <YAxis domain={["auto", "auto"]} />
 
               <CartesianGrid strokeDasharray="3 3" />
               <Legend verticalAlign="top" />
