@@ -126,7 +126,6 @@ class AlertView extends Component {
       })
       .then(json => {
         let newSelected = new Set();
-
         json.forEach(x => {
           newSelected.add(x.fedid);
         });

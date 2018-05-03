@@ -76,9 +76,7 @@ def bridges(date):
         row = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date, Constructions.fedid == construction).first()
         if not row:
             row = Constructions.query.filter_by(fedid=str(float(construction))).first()
-            print row.as_dict()
             return json.dumps(row.as_dict())
-        print row._asdict()
         return json.dumps(row._asdict())
     else:
         rows = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date).all()
@@ -107,8 +105,10 @@ def dates():
 @auth.login_required
 def set_alerts():
     user_id =  g.user.id
+
     constructions = json.loads(request.data)["constructions"]
     for item in constructions:
+        print item
         alert = Alert(constructions_fedid = float(item), users_id = user_id)
         db.session.add(alert)
         db.session.commit()

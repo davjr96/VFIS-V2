@@ -108,6 +108,8 @@ class Detail extends Component {
   }
 
   render() {
+    const { units } = this.props;
+
     const display = this.state.display;
     const info = this.state.construction;
     const data = this.state.series;
@@ -167,8 +169,8 @@ class Detail extends Component {
                 <td> {info.stream}</td>
               </tr>
               <tr>
-                <td>Bridge Elevation (m): </td>
-                <td> {info.roadelev} </td>
+                <td>Bridge Elevation: </td>
+                <td>{(parseFloat(info.roadelev) || 0) * parseFloat(units)} </td>
               </tr>
               <tr>
                 <td>
@@ -176,12 +178,14 @@ class Detail extends Component {
                 </td>
               </tr>
               <tr>
-                <td>Maximum Water Level (m):</td>
-                <td> {info.maxwl}</td>
+                <td>Maximum Water Level:</td>
+                <td> {(parseFloat(info.maxwl) || 0) * parseFloat(units)}</td>
               </tr>
               <tr>
-                <td>Bridge Overtopped by (m):</td>
-                <td> {info.floodedby} </td>
+                <td>Bridge Overtopped by:</td>
+                <td>
+                  {(parseFloat(info.floodedby) || 0) * parseFloat(units)}{" "}
+                </td>
               </tr>
               <tr>
                 <td>Overtopping Starting Date/Time:</td>
@@ -256,6 +260,7 @@ class Detail extends Component {
 
 const mapStateToProps = state => ({
   date: state.user.date,
+  units: state.user.units,
   authData: state.user.data
 });
 

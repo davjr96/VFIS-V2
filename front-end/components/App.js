@@ -9,6 +9,8 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import { connect } from "react-redux";
 import { logout } from "../actions/user";
+import { units } from "../actions/units";
+
 import {
   userIsAuthenticatedRedir,
   userIsNotAuthenticatedRedir,
@@ -32,7 +34,7 @@ const ProtectedDetail = userIsAuthenticatedRedir(Detail);
 const ProtectedTable = userIsAuthenticatedRedir(Table);
 const ProtectedAlert = userIsAuthenticatedRedir(Alert);
 
-const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
+const LoginOnlyNav = userIsAuthenticated(({ user, logout, units }) => (
   <nav className="navbar">
     <LinkContainer to="/">
       <div className="navbar-brand">
@@ -62,6 +64,34 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
         </div>
       </div>
       <div className="navbar-end">
+        <div className="navbar-item is-right">
+          <div className="switch-field">
+            <input
+              type="radio"
+              id="switch_left"
+              name="switch_2"
+              value="3.28084"
+              onChange={e => {
+                units({
+                  units: e.target.value
+                });
+              }}
+            />
+            <label htmlFor="switch_left">Ft</label>
+            <input
+              type="radio"
+              id="switch_right"
+              name="switch_2"
+              value="1"
+              onChange={e => {
+                units({
+                  units: e.target.value
+                });
+              }}
+            />
+            <label htmlFor="switch_right">m</label>
+          </div>
+        </div>
         <div className="navbar-item has-dropdown is-hoverable is-right">
           <span className="navbar-link">
             <i className="fas fa-user" />
@@ -80,11 +110,11 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
   </nav>
 ));
 
-function App({ user, logout }) {
+function App({ user, logout, units }) {
   return (
     <Router>
       <div>
-        <LoginOnlyNav user={user} logout={logout} />
+        <LoginOnlyNav user={user} logout={logout} units={units} />
         <div>
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
@@ -109,4 +139,4 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps, { logout })(App);
+export default connect(mapStateToProps, { logout, units })(App);

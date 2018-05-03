@@ -3,7 +3,8 @@ import * as constants from "../constants";
 const initialState = {
   data: null,
   isLoading: false,
-  date: null
+  date: null,
+  units: 3.28084
 };
 
 export default function userUpdate(state = initialState, { type, payload }) {
@@ -14,6 +15,8 @@ export default function userUpdate(state = initialState, { type, payload }) {
       return { ...state, data: payload, isLoading: false };
     case constants.CHANGING_DATE:
       return { ...state, date: payload };
+    case constants.CHANGING_UNITS:
+      return { ...state, units: payload };
     case constants.USER_LOGGED_OUT:
       return initialState;
     default:

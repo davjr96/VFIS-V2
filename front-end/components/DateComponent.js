@@ -42,7 +42,7 @@ class DateComponent extends Component {
       })
       .then(json => {
         var latest = moment.utc(json.dates[0], "YYYYMMDD-HHmmss").local();
-        if (latest.isBefore(moment().subtract(1, "hour"))) {
+        if (latest.isBefore(moment().subtract(3, "hour"))) {
           json.dates.unshift(
             moment(new Date())
               .utc()
