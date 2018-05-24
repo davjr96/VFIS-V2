@@ -69,8 +69,6 @@ def get_auth_token():
 @auth.login_required
 def bridges(date):
     construction = request.args.get('construction')
-    print construction
-    print date
     if construction:
         construction = str(float(construction))
         row = db.session.query(Forecast.start_date, Forecast.end_date,Forecast.maxwl,Forecast.floodedby, Constructions.fedid, Constructions.roadname, Constructions.xcord, Constructions.ycord, Constructions.stream, Constructions.roadelev).join(Constructions, Forecast.construction_fed_id == Constructions.fedid).filter(Forecast.run_date_time == date, Constructions.fedid == construction).first()
@@ -108,7 +106,6 @@ def set_alerts():
 
     constructions = json.loads(request.data)["constructions"]
     for item in constructions:
-        print item
         alert = Alert(constructions_fedid = float(item), users_id = user_id)
         db.session.add(alert)
         db.session.commit()

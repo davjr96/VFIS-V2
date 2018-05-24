@@ -10,5 +10,6 @@ constants.py
 .env.test.local
 .env.production.local
 desktop.ini
+.env
 
 Icon
