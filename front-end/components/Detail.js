@@ -121,10 +121,12 @@ class Detail extends Component {
     const gradientOffset = () => {
       if (max <= info.roadelev) {
         return 0;
-      } else if (min >= info.roadelev) {
-        return 1;
       } else {
-        return 1 - info.roadelev / 100;
+        let bottomofGraph =
+          Math.min(parseFloat(max), parseFloat(info.roadelev)) - 0.5;
+        console.log(info.roadelev, max);
+
+        return 1 - (info.roadelev - bottomofGraph) / (max - bottomofGraph);
       }
     };
 
@@ -209,7 +211,7 @@ class Detail extends Component {
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                   <stop offset={off} stopColor="red" stopOpacity={1} />
-                  <stop stopColor="#8884d8" stopOpacity={1} />
+                  <stop offset={off} stopColor="#8884d8" stopOpacity={1} />
                 </linearGradient>
               </defs>
               <XAxis
