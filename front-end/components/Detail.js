@@ -124,12 +124,11 @@ class Detail extends Component {
       } else if (min >= info.roadelev) {
         return 1;
       } else {
-        return info.roadelev / 100;
+        return 1 - info.roadelev / 100;
       }
     };
 
     off = gradientOffset();
-    console.log(off);
 
     const CustomizedAxisTick = createReactClass({
       render() {
@@ -210,7 +209,7 @@ class Detail extends Component {
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                   <stop offset={off} stopColor="red" stopOpacity={1} />
-                  <stop offset={off} stopColor="#8884d8" stopOpacity={1} />
+                  <stop stopColor="#8884d8" stopOpacity={1} />
                 </linearGradient>
               </defs>
               <XAxis
@@ -220,7 +219,14 @@ class Detail extends Component {
                 tick={<CustomizedAxisTick />}
                 interval={10}
               />
-              <YAxis domain={["auto", "auto"]} />
+              <YAxis
+                domain={[
+                  Math.min(parseFloat(info.maxwl), parseFloat(info.roadelev)) -
+                    0.5,
+                  Math.max(parseFloat(info.maxwl), parseFloat(info.roadelev)) +
+                    0.5
+                ]}
+              />
 
               <CartesianGrid strokeDasharray="3 3" />
               <Legend verticalAlign="top" />
