@@ -9,7 +9,6 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import { connect } from "react-redux";
 import { logout } from "../actions/user";
-import { units } from "../actions/units";
 
 import {
   userIsAuthenticatedRedir,
@@ -25,6 +24,7 @@ import Detail from "./Detail";
 import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
+import UnitComponent from "./UnitComponent";
 import RegisterComponent from "./Register";
 import Alert from "./Alert";
 
@@ -34,7 +34,7 @@ const ProtectedDetail = userIsAuthenticatedRedir(Detail);
 const ProtectedTable = userIsAuthenticatedRedir(Table);
 const ProtectedAlert = userIsAuthenticatedRedir(Alert);
 
-const LoginOnlyNav = userIsAuthenticated(({ user, logout, units }) => (
+const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
   <nav className="navbar">
     <LinkContainer to="/">
       <div className="navbar-brand">
@@ -65,32 +65,7 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout, units }) => (
       </div>
       <div className="navbar-end">
         <div className="navbar-item is-right">
-          <div className="switch-field">
-            <input
-              type="radio"
-              id="switch_left"
-              name="switch_2"
-              value="3.28084"
-              onChange={e => {
-                units({
-                  units: e.target.value
-                });
-              }}
-            />
-            <label htmlFor="switch_left">Ft</label>
-            <input
-              type="radio"
-              id="switch_right"
-              name="switch_2"
-              value="1"
-              onChange={e => {
-                units({
-                  units: e.target.value
-                });
-              }}
-            />
-            <label htmlFor="switch_right">m</label>
-          </div>
+          <UnitComponent />
         </div>
         <div className="navbar-item has-dropdown is-hoverable is-right">
           <span className="navbar-link">
@@ -110,11 +85,11 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout, units }) => (
   </nav>
 ));
 
-function App({ user, logout, units }) {
+function App({ user, logout }) {
   return (
     <Router>
       <div>
-        <LoginOnlyNav user={user} logout={logout} units={units} />
+        <LoginOnlyNav user={user} logout={logout} />
         <div>
           <Route exact path="/" component={ProtectedMap} />
           <Route exact path="/table" component={ProtectedTable} />
@@ -139,4 +114,4 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps, { logout, units })(App);
+export default connect(mapStateToProps, { logout })(App);
