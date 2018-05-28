@@ -28,13 +28,13 @@ class Detail extends Component {
     this.state = {
       series: [],
       display: false,
-      construction: {},
-      dataMax: 0,
-      dataMin: 0
+      construction: {}
     };
   }
 
   loadtimeseries(date, construction) {
+    const { units } = this.props;
+
     let headers = new Headers();
 
     headers.append(
@@ -58,13 +58,8 @@ class Detail extends Component {
         }.bind(this)
       )
       .then(json => {
-        const dataMax = Math.max(...json.map(i => i.y));
-        const dataMin = Math.min(...json.map(i => i.y));
-
         this.setState({
-          series: json,
-          dataMax: dataMax,
-          dataMin: dataMin
+          series: json
         });
       })
       .catch(function(ex) {
@@ -112,21 +107,26 @@ class Detail extends Component {
 
     const display = this.state.display;
     const info = this.state.construction;
-    const data = this.state.series;
-    const max = this.state.dataMax;
-    const min = this.state.dataMin;
+    const roadelev = (parseFloat(info.roadelev) || 0) * parseFloat(units);
+    const maxwl = (parseFloat(info.maxwl) || 0) * parseFloat(units);
+    const rawdata = this.state.series;
+    let data = [];
+    rawdata.forEach(i => {
+      let y = (parseFloat(i.y) || 0) * parseFloat(units);
+      let roadelev = (parseFloat(i.roadelev) || 0) * parseFloat(units);
+      data.push({ x: i.x, y: y, roadelev: roadelev });
+    });
+    const max = Math.max(...data.map(i => i.y));
+    const min = Math.min(...data.map(i => i.y));
     let breakpoint = 0;
     let off = 0;
 
     const gradientOffset = () => {
-      if (max <= info.roadelev) {
+      if (max <= roadelev) {
         return 0;
       } else {
-        let bottomofGraph =
-          Math.min(parseFloat(max), parseFloat(info.roadelev)) - 0.5;
-        console.log(info.roadelev, max);
-
-        return 1 - (info.roadelev - bottomofGraph) / (max - bottomofGraph);
+        let bottomofGraph = Math.min(max, roadelev) - 0.5 * units;
+        return 1 - (roadelev - bottomofGraph) / (max - bottomofGraph);
       }
     };
 
@@ -223,10 +223,8 @@ class Detail extends Component {
               />
               <YAxis
                 domain={[
-                  Math.min(parseFloat(info.maxwl), parseFloat(info.roadelev)) -
-                    0.5,
-                  Math.max(parseFloat(info.maxwl), parseFloat(info.roadelev)) +
-                    0.5
+                  Math.min(maxwl, roadelev) - 0.5 * units,
+                  Math.max(maxwl, roadelev) + 0.5 * units
                 ]}
               />
 
