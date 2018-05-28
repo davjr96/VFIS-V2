@@ -12,10 +12,15 @@ class UnitComponent extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-
-    this.state = {
-      checked: true
-    };
+    if (props.user.units == 1) {
+      this.state = {
+        checked: false
+      };
+    } else {
+      this.state = {
+        checked: true
+      };
+    }
   }
 
   handleChange(checked) {

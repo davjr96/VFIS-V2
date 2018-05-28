@@ -73,6 +73,7 @@ class TableView extends Component {
     this.loadBridges(this.props.date);
   }
   render() {
+    const { units } = this.props;
     const columns = [
       {
         Header: "Feature ID",
@@ -114,21 +115,30 @@ class TableView extends Component {
         accessor: "roadelev",
         filterMethod: (filter, rows) =>
           matchSorter(rows, filter.value, { keys: ["roadelev"] }),
-        filterAll: true
+        filterAll: true,
+        Cell: row => (
+          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+        )
       },
       {
         Header: "Maximum Water Level",
         accessor: "maxwl",
         filterMethod: (filter, rows) =>
           matchSorter(rows, filter.value, { keys: ["maxwl"] }),
-        filterAll: true
+        filterAll: true,
+        Cell: row => (
+          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+        )
       },
       {
         Header: "Flooded By",
         accessor: "floodedby",
         filterMethod: (filter, rows) =>
           matchSorter(rows, filter.value, { keys: ["floodedby"] }),
-        filterAll: true
+        filterAll: true,
+        Cell: row => (
+          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+        )
       }
     ];
     return (
@@ -156,6 +166,7 @@ class TableView extends Component {
 
 const mapStateToProps = state => ({
   date: state.user.date,
+  units: state.user.units,
   authData: state.user.data
 });
 
