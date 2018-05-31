@@ -95,7 +95,7 @@ def wait_for_operation(compute, project, zone, operation):
 def runBatch(filename):
     print "Running Script"
     result = compute.instances().start(project='flood-warning-system',
-                                       zone='us-east1-c', instance='model').execute()
+                                       zone='us-east1-c', instance='model-beta').execute()
     wait_for_operation(compute, 'flood-warning-system',
                        'us-east1-c', result['name'])
     result = compute.instances().list(
