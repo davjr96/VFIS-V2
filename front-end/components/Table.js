@@ -117,7 +117,9 @@ class TableView extends Component {
           matchSorter(rows, filter.value, { keys: ["roadelev"] }),
         filterAll: true,
         Cell: row => (
-          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+          <span>
+            {((parseFloat(row.value) || 0) * parseFloat(units)).toFixed(2)}
+          </span>
         )
       },
       {
@@ -127,7 +129,9 @@ class TableView extends Component {
           matchSorter(rows, filter.value, { keys: ["maxwl"] }),
         filterAll: true,
         Cell: row => (
-          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+          <span>
+            {((parseFloat(row.value) || 0) * parseFloat(units)).toFixed(2)}
+          </span>
         )
       },
       {
@@ -137,7 +141,9 @@ class TableView extends Component {
           matchSorter(rows, filter.value, { keys: ["floodedby"] }),
         filterAll: true,
         Cell: row => (
-          <span>{(parseFloat(row.value) || 0) * parseFloat(units)}</span>
+          <span>
+            {((parseFloat(row.value) || 0) * parseFloat(units)).toFixed(2)}
+          </span>
         )
       }
     ];
