@@ -171,7 +171,11 @@ class Detail extends Component {
               </tr>
               <tr>
                 <td>Bridge Elevation: </td>
-                <td>{(parseFloat(info.roadelev) || 0) * parseFloat(units)} </td>
+                <td>
+                  {(
+                    (parseFloat(info.roadelev) || 0) * parseFloat(units)
+                  ).toFixed(2)}{" "}
+                </td>
               </tr>
               <tr>
                 <td>
@@ -180,12 +184,19 @@ class Detail extends Component {
               </tr>
               <tr>
                 <td>Maximum Water Level:</td>
-                <td> {(parseFloat(info.maxwl) || 0) * parseFloat(units)}</td>
+                <td>
+                  {" "}
+                  {((parseFloat(info.maxwl) || 0) * parseFloat(units)).toFixed(
+                    2
+                  )}
+                </td>
               </tr>
               <tr>
                 <td>Bridge Overtopped by:</td>
                 <td>
-                  {(parseFloat(info.floodedby) || 0) * parseFloat(units)}{" "}
+                  {(
+                    (parseFloat(info.floodedby) || 0) * parseFloat(units)
+                  ).toFixed(2)}
                 </td>
               </tr>
               <tr>

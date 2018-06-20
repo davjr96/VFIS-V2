@@ -50,7 +50,11 @@ class BridgeInfo extends Component {
             </tr>
             <tr>
               <td>Bridge Overtopped by:</td>
-              <td> {(parseFloat(info.floodedby) || 0) * parseFloat(units)} </td>
+              <td>
+                {(
+                  (parseFloat(info.floodedby) || 0) * parseFloat(units)
+                ).toFixed(2)}{" "}
+              </td>
             </tr>
             <tr>
               <td>Overtopping Starting Date/Time:</td>
