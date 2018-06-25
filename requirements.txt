@@ -85,5 +85,5 @@ SQLAlchemy==1.2.8
 tzlocal==1.5.1
 uritemplate==3.0.0
 urllib3==1.22
-WebOb==1.8.0
+WebOb==1.8.2
 Werkzeug==0.14.1
