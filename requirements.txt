@@ -39,7 +39,7 @@ google-cloud-monitoring==0.29.0
 google-cloud-pubsub==0.35.4
 google-cloud-resource-manager==0.28.1
 google-cloud-runtimeconfig==0.28.1
-google-cloud-spanner==0.29.0
+google-cloud-spanner==1.4.0
 google-cloud-speech==0.30.0
 google-cloud-storage==1.6.0
 google-cloud-trace==0.17.0
