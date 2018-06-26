@@ -237,6 +237,9 @@ class Detail extends Component {
                   Math.min(maxwl, roadelev) - 0.5 * units,
                   Math.max(maxwl, roadelev) + 0.5 * units
                 ]}
+                tickFormatter={x => {
+                  return (x * parseFloat(units)).toFixed(2);
+                }}
               />
 
               <CartesianGrid strokeDasharray="3 3" />
