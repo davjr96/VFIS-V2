@@ -95,7 +95,7 @@ class Map extends Component {
     let color;
     if (bridge.floodedby > 0) {
       color = RED;
-    } else if (bridge.floodedby > -0.3 && bridge.floodedby <= 0) {
+    } else if (bridge.floodedby > -0.3 && bridge.floodedby < 0) {
       color = YELLOW;
     } else {
       color = GREEN;
