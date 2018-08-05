@@ -58,11 +58,11 @@ class BridgeInfo extends Component {
             </tr>
             <tr>
               <td>Overtopping Starting Date/Time:</td>
-              <td> Coming Soon </td>
+              <td> {info.start_date} </td>
             </tr>
             <tr>
               <td>Overtopping Ending Date/Time:</td>
-              <td> Coming Soon </td>
+              <td> {info.end_date} </td>
             </tr>
           </tbody>
         </table>
