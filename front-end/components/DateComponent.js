@@ -42,7 +42,7 @@ class DateComponent extends Component {
       })
       .then(json => {
         var latest = moment.utc(json.dates[0], "YYYYMMDD-HHmmss").local();
-        if (latest.isBefore(moment().subtract(3, "hour"))) {
+        if (latest.isBefore(moment().subtract(18, "hour"))) {
           json.dates.unshift(
             moment(new Date())
               .utc()
@@ -105,4 +105,7 @@ class DateComponent extends Component {
 const mapStateToProps = state => ({
   authData: state.user.data
 });
-export default connect(mapStateToProps, { date })(DateComponent);
+export default connect(
+  mapStateToProps,
+  { date }
+)(DateComponent);
