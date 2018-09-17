@@ -83,10 +83,17 @@ class DateComponent extends Component {
     for (var j = 0; j < this.state.dates.length; j++) {
       options.push({
         value: j,
-        label: moment
-          .utc(this.state.dates[j], "YYYYMMDD-HHmmss")
-          .local()
-          .format("MMMM Do YYYY, h a")
+        label:
+          moment
+            .utc(this.state.dates[j], "YYYYMMDD-HHmmss")
+            .local()
+            .format("MMMM Do YYYY, h a") +
+          " to " +
+          moment
+            .utc(this.state.dates[j], "YYYYMMDD-HHmmss")
+            .local()
+            .add(18, "hour")
+            .format("MMMM Do YYYY, h a")
       });
     }
 
