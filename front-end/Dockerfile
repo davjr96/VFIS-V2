@@ -4,7 +4,7 @@ WORKDIR /app
 RUN npm install && npm run build
 
 FROM nginx:1.15.2-alpine
-COPY --from=builder /app/build /app/build
+COPY --from=builder /app/dist /app/build
 COPY ./nginx etc/nginx
 
 EXPOSE 80
