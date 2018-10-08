@@ -1,17 +1,10 @@
 from pydap.client import open_url
 from pydap.exceptions import ServerError
-import subprocess
 import datetime as dt
 import numpy as np
 import urllib2
-import paramiko
-import googleapiclient.discovery
-from apscheduler.schedulers.blocking import BlockingScheduler
-import constants
+from startModel import runBatch
 import time
-
-compute = googleapiclient.discovery.build('compute', 'v1')
-sched = BlockingScheduler()
 
 """
 Global parameters:
@@ -38,16 +31,16 @@ def getData(current_dt, delta_T):
     date = dt.datetime.strftime(dtime_fix, "%Y%m%d")
     fc_hour = dt.datetime.strftime(dtime_fix, "%H")
     hour = str(fc_hour)
-    url = 'http://nomads.ncep.noaa.gov:9090/dods/hrrr/hrrr%s/hrrr_sfc_%sz' % (date, hour)
+    url = 'http://nomads.ncep.noaa.gov:9090/dods/hrrr/hrrr%s/hrrr_sfc.t%sz' % (date, hour)
     try:
         dataset = open_url(url)
         if len(dataset.keys()) > 0:
             return dataset, url, date, hour
         else:
-            print "Back up method - Failed to open : %s" % url
+            print ("Back up method - Failed to open : %s" % url)
             return getData(current_dt, delta_T - 1)
     except ServerError:
-        print "Failed to open : %s" % url
+        print ("Failed to open : %s" % url)
         return getData(current_dt, delta_T - 1)
 
 
@@ -71,7 +64,6 @@ def max_six(l):
             maxSum = sum(l[i:i+6])
     return maxSum
 
-
 def max_twelve(l):
     maxSum = 0
     for i in range(0,len(l)-12):
@@ -79,55 +71,18 @@ def max_twelve(l):
             maxSum = sum(l[i:i+12])
     return maxSum
 
-def wait_for_operation(compute, project, zone, operation):
-    print('Waiting for operation to finish...')
-    while True:
-        result = compute.zoneOperations().get(project=project, zone=zone,
-                                              operation=operation).execute()
-        if result['status'] == 'DONE':
-            print("done.")
-            if 'error' in result:
-                raise Exception(result['error'])
-            return result
-        time.sleep(1)
-
-
-def runBatch(filename):
-    print "Running Script"
-    result = compute.instances().start(project='flood-warning-system',
-                                       zone='us-east1-c', instance='model-beta').execute()
-    wait_for_operation(compute, 'flood-warning-system',
-                       'us-east1-c', result['name'])
-    result = compute.instances().list(
-        project='flood-warning-system', zone='us-east1-c').execute()
-    InstanceIP = result['items'][0]['networkInterfaces'][0]['accessConfigs'][0]['natIP']
-    print "cd " + constants.InstanceScriptLocation + " & " + constants.InstanceScript + " " + filename
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(InstanceIP, username=constants.InstanceUser, password=constants.InstancePass)
-    ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(
-        "cd " + constants.InstanceScriptLocation + " & " +  constants.InstanceScript + " " + filename)
-    print ssh_stdout.readlines()
-    print ssh_stderr.readlines()
-    ssh.close()
-    checkForFlooding(filename)
-
-def checkForFlooding(filename):
-    return 0
-
-
 def data_monitor():
 
     with open("forecasts.txt") as f:
         ran = f.readlines()
     ran = [x.strip() for x in ran]
-    print ran
+    print (ran)
 
     # Get newest available HRRR dataset by trying (current datetime - delta time) until
     # a dataset is available for that hour. This corrects for inconsistent posting
     # of HRRR datasets to repository
     utc_datetime = dt.datetime.utcnow()
-    print "Open a connection to HRRR to retrieve forecast rainfall data.............\n"
+    print ("Open a connection to HRRR to retrieve forecast rainfall data.............\n")
     # get newest available dataset
     dataset, url, date, hour = getData(utc_datetime, delta_T=0)
     print ("Retrieving forecast data from: %s " % url)
@@ -144,7 +99,7 @@ def data_monitor():
     grid_lat1 = gridpt(lat_lb, initLat, aResLat)
     grid_lat2 = gridpt(lat_ub, initLat, aResLat)
 
-    max_precip_value = []
+    max_precip_value = [0]
     for hr in range(len(precip.time[:])):
         while True:
             try:
@@ -171,10 +126,10 @@ def data_monitor():
     threshold = [s.strip('/') for s in threshold]  # Remove trailing / from raw data
     threshold = map(float, threshold)  # Convert to float
     threshold = [round(r * 25.4, 2) for r in threshold]  # Convert to mm from in, round to 2 decimal places
-    print "Flooding threshold",
-    print threshold
-
+    print ("Flooding threshold")
+    print (threshold)
     triggered = False
+
     if max(max_precip_value) > threshold[0] and triggered is False:
         triggered = True
     if max_three(max_precip_value) > threshold[1] and triggered is False:
@@ -187,17 +142,22 @@ def data_monitor():
         triggered = True
 
     if triggered and filename not in ran:
-        print "Starting Model Run"
         f = open('forecasts.txt', 'w')
         f.write(filename + '\n')
         f.close()
-
+        #
+        # filepath='"C:/Users/Danny/Desktop/floodWarningmodelPrototype/runs/run_workflow.bat" ' + filename
+        # p = subprocess.call(filepath, shell=True)
+        # print p
         runBatch(filename)
-        print "Done running the model at", dt.datetime.now()
+        print ("Done running the model at", dt.datetime.now())
     else:
-        print "Model not started"
+        print ("Model not started")
 
 
-sched.add_job(data_monitor, 'interval', hours=1)
-sched.start()
-# data_monitor()
+
+
+while True:
+    if abs(dt.datetime.now().minute - 20) <= 5:
+        data_monitor()
+    time.sleep(60)
