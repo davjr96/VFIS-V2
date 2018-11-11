@@ -1,4 +1,4 @@
-FROM python:2.7.15-slim
+FROM python:3.7.1
 RUN apt-get update -y && apt-get install -y python-pip python-dev build-essential libpq-dev curl
 RUN curl -sSL https://sdk.cloud.google.com | bash
 COPY . /app

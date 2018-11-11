@@ -2,10 +2,12 @@ from pydap.client import open_url
 from pydap.exceptions import ServerError
 import datetime as dt
 import numpy as np
-import urllib2
-from startModel import runBatch
+from .startModel import runBatch
 import time
+import logging
+import urllib.request
 
+logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
 """
 Global parameters:
     -Study area location (LL and UR corners of TUFLOW model bounds)
@@ -39,7 +41,7 @@ def getData(current_dt, delta_T):
         else:
             print ("Back up method - Failed to open : %s" % url)
             return getData(current_dt, delta_T - 1)
-    except ServerError:
+    except:
         print ("Failed to open : %s" % url)
         return getData(current_dt, delta_T - 1)
 
@@ -72,8 +74,9 @@ def max_twelve(l):
     return maxSum
 
 def data_monitor():
+    print ("Monitor Started")
 
-    with open("forecasts.txt") as f:
+    with open("forecasts.txt", "w+") as f:
         ran = f.readlines()
     ran = [x.strip() for x in ran]
     print (ran)
@@ -109,19 +112,18 @@ def data_monitor():
             except ServerError:
                 'There was a server error. Let us try again'
 
-    print "Rainfall",
-    print max_precip_value
+    print ("Rainfall")
+    print (max_precip_value)
 
-    response = urllib2.urlopen('http://www.nws.noaa.gov/data/ALR/FFGAKQ')
-    html = response.read()
+    response =  urllib.request.urlopen('http://www.nws.noaa.gov/data/ALR/FFGAKQ')
+    html = response.read().decode('utf-8')
 
     threshold = []
     # Split into lines
     for line in html.splitlines():
         if line[0:6] == "VAZ088":  # Capture line of region of interest
             threshold = line.split(" ")  # Turn line into list
-
-    threshold = filter(None, threshold)  # Remove empty items of list leaving only region and rainfall
+    threshold = list(filter(None, threshold))  # Remove empty items of list leaving only region and rainfall
     threshold = threshold[1:6]  # Remove region from list
     threshold = [s.strip('/') for s in threshold]  # Remove trailing / from raw data
     threshold = map(float, threshold)  # Convert to float
@@ -142,13 +144,9 @@ def data_monitor():
         triggered = True
 
     if triggered and filename not in ran:
-        f = open('forecasts.txt', 'w')
+        f = open('forecasts.txt', 'w+')
         f.write(filename + '\n')
         f.close()
-        #
-        # filepath='"C:/Users/Danny/Desktop/floodWarningmodelPrototype/runs/run_workflow.bat" ' + filename
-        # p = subprocess.call(filepath, shell=True)
-        # print p
         runBatch(filename)
         print ("Done running the model at", dt.datetime.now())
     else:
@@ -156,8 +154,7 @@ def data_monitor():
 
 
 
-
-while True:
-    if abs(dt.datetime.now().minute - 20) <= 5:
+if __name__ == '__main__':
+    while True:
         data_monitor()
-    time.sleep(60)
+        time.sleep(3600)

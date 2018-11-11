@@ -1,11 +1,10 @@
 from app import flaskapp, auth
 
 from flask import Flask, jsonify, render_template, Response, request, g, url_for, abort
-import constants
 import simplekml
 from flask_httpauth import HTTPBasicAuth
 import json
-from models import Alert, User, Constructions, Forecast, db
+from .models import Alert, User, Constructions, Forecast, db
 import pandas as pd
 from datetime import datetime as dt, timedelta
 import time

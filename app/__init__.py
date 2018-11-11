@@ -4,7 +4,7 @@
 from flask import Flask
 import constants
 from flask_httpauth import HTTPBasicAuth
-from models import Alert, User, Constructions, Forecast, db
+from .models import Alert, User, Constructions, Forecast, db
 
 # Configuration from file
 

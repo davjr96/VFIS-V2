@@ -1,6 +1,6 @@
 import paramiko
 import googleapiclient.discovery
-import constants
+import .constants
 import time
 import logging
 logging.basicConfig()
