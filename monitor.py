@@ -2,7 +2,7 @@ from pydap.client import open_url
 from pydap.exceptions import ServerError
 import datetime as dt
 import numpy as np
-from .startModel import runBatch
+from startModel import runBatch
 import time
 import logging
 import urllib.request
