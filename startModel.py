@@ -5,7 +5,31 @@ import time
 import logging
 logging.basicConfig()
 
-compute = googleapiclient.discovery.build('compute', 'v1')
+import os.path
+import hashlib
+import tempfile
+
+class DiscoveryCache:
+    def filename(self, url):
+        return os.path.join(
+            tempfile.gettempdir(),
+            'google_api_discovery_' + hashlib.md5(url.encode()).hexdigest())
+
+    def get(self, url):
+        try:
+            with open(self.filename(url), 'rb') as f:
+                return f.read().decode()
+        except FileNotFoundError:
+            return None
+
+    def set(self, url, content):
+        with tempfile.NamedTemporaryFile(delete=False) as f:
+            f.write(content.encode())
+            f.flush()
+            os.fsync(f)
+        os.rename(f.name, self.filename(url))
+
+compute = googleapiclient.discovery.build('compute', 'v1',cache=DiscoveryCache())
 
 def wait_for_operation(compute, project, zone, operation):
     print('Waiting for operation to finish...')
