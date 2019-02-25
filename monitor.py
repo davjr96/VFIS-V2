@@ -7,13 +7,12 @@ import time
 import logging
 import urllib.request
 
-logging.getLogger('googleapicliet.discovery_cache').setLevel(logging.ERROR)
 """
 Global parameters:
     -Study area location (LL and UR corners of TUFLOW model bounds)
     -Initial and average resolution values for longitude and latitude,
      needed for grid point conversion
-    (source: http://nomads.ncep.noaa.gov:9090/dods/hrrr "info" link)
+    (source: https://nomads.ncep.noaa.gov:9090/dods/hrrr "info" link)
 """
 
 initLon = -134.09548000000  # modified that to follow the latest values on the website
@@ -33,7 +32,8 @@ def getData(current_dt, delta_T):
     date = dt.datetime.strftime(dtime_fix, "%Y%m%d")
     fc_hour = dt.datetime.strftime(dtime_fix, "%H")
     hour = str(fc_hour)
-    url = 'http://nomads.ncep.noaa.gov:9090/dods/hrrr/hrrr%s/hrrr_sfc.t%sz' % (date, hour)
+
+    url = 'https://nomads.ncep.noaa.gov:9090/dods/hrrr/hrrr%s/hrrr_sfc.t%sz' % (date, hour)
     try:
         dataset = open_url(url)
         if len(dataset.keys()) > 0:
@@ -103,6 +103,7 @@ def data_monitor():
     grid_lat2 = gridpt(lat_ub, initLat, aResLat)
 
     max_precip_value = [0]
+
     for hr in range(len(precip.time[:])):
         while True:
             try:
