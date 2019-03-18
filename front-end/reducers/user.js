@@ -4,7 +4,8 @@ const initialState = {
   data: null,
   isLoading: false,
   date: null,
-  units: 3.28084
+  units: 3.28084,
+  area: "VA"
 };
 
 export default function userUpdate(state = initialState, { type, payload }) {
@@ -17,6 +18,8 @@ export default function userUpdate(state = initialState, { type, payload }) {
       return { ...state, date: payload };
     case constants.CHANGING_UNITS:
       return { ...state, units: payload };
+    case constants.CHANGING_AREA:
+      return { ...state, area: payload };
     case constants.USER_LOGGED_OUT:
       return initialState;
     default:

@@ -3,3 +3,4 @@ export const USER_LOGGED_IN = "USER_LOGGED_IN";
 export const USER_LOGGED_OUT = "USER_LOGGED_OUT";
 export const CHANGING_DATE = "CHANGING_DATE";
 export const CHANGING_UNITS = "CHANGING_UNITS";
+export const CHANGING_AREA = "CHANGING_AREA";

@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import base64 from "base-64";
 import Select from "react-select";
 
+import areaComponent from "./areaComponent";
 import BridgePin from "./bridge-pin";
 import BridgeInfo from "./bridge-info";
 import Legend from "./legend";
@@ -234,6 +235,11 @@ class Map extends Component {
   }
   componentWillReceiveProps(nextProps) {
     this.loadBridges(nextProps.date);
+
+    if (nextProps.area == "VA")
+      this.setState({ viewport: VAViewport }, () => this._resize());
+    else if (nextProps.area == "LA")
+      this.setState({ viewport: LAViewport }, () => this._resize());
   }
   _resize = () => {
     this.setState({
@@ -277,7 +283,7 @@ class Map extends Component {
     let color;
     if (bridge.max > 11) {
       color = RED;
-    } else if (bridge.max > 8 && bridge.floodedby > 6) {
+    } else if (bridge.max < 11 && bridge.max > 8) {
       color = YELLOW;
     } else {
       color = GREEN;
@@ -346,7 +352,8 @@ class Map extends Component {
 
 const mapStateToProps = state => ({
   date: state.user.date,
-  authData: state.user.data
+  authData: state.user.data,
+  area: state.user.area
 });
 
 export default connect(mapStateToProps)(Map);

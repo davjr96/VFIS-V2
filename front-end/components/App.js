@@ -25,6 +25,8 @@ import Table from "./Table";
 import LoginComponent from "./Login";
 import DateComponent from "./DateComponent";
 import UnitComponent from "./UnitComponent";
+import AreaComponent from "./areaComponent";
+
 import RegisterComponent from "./Register";
 import Alert from "./Alert";
 
@@ -43,27 +45,34 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
     </LinkContainer>
     <div className="navbar-menu">
       <div className="navbar-start">
-        <div className="nav-item">
-          <DateComponent />
-        </div>
+        {user.area == "VA" ? (
+          <div className="nav-item">
+            <DateComponent />
+          </div>
+        ) : null}
         <LinkContainer to="/">
           <a className="navbar-item">Map</a>
         </LinkContainer>
-
-        <LinkContainer to="/table">
-          <a className="navbar-item">Table</a>
-        </LinkContainer>
-
-        <div className="navbar-item has-dropdown is-hoverable">
-          <p className="navbar-link">Utilities</p>
-          <div className="navbar-dropdown is-boxed">
-            <a className="navbar-item" href={"/api/kml/" + user.date}>
-              Download KML
-            </a>
+        {user.area == "VA" ? (
+          <LinkContainer to="/table">
+            <a className="navbar-item">Table</a>
+          </LinkContainer>
+        ) : null}
+        {user.area == "VA" ? (
+          <div className="navbar-item has-dropdown is-hoverable">
+            <p className="navbar-link">Utilities</p>
+            <div className="navbar-dropdown is-boxed">
+              <a className="navbar-item" href={"/api/kml/" + user.date}>
+                Download KML
+              </a>
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
       <div className="navbar-end">
+        <div className="navbar-item is-right">
+          Area: <AreaComponent />
+        </div>
         <div className="navbar-item is-right">
           <UnitComponent />
         </div>
@@ -114,4 +123,7 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps, { logout })(App);
+export default connect(
+  mapStateToProps,
+  { logout }
+)(App);
