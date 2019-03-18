@@ -71,7 +71,7 @@ const LoginOnlyNav = userIsAuthenticated(({ user, logout }) => (
       </div>
       <div className="navbar-end">
         <div className="navbar-item is-right">
-          Area: <AreaComponent />
+          Area: <br /> <AreaComponent />
         </div>
         <div className="navbar-item is-right">
           <UnitComponent />
