@@ -1,5 +1,5 @@
 constants.py
-
+service.json
 *.pyc
 
 # misc
@@ -13,3 +13,5 @@ desktop.ini
 .env
 
 Icon?
+
+.venv
