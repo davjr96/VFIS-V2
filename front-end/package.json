@@ -6,7 +6,7 @@
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.4",
     "match-sorter": "^1.8.0",
-    "moment": "^2.20.1",
+    "moment": "^2.29.2",
     "prop-types": "^15.6.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
