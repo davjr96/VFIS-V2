@@ -18,7 +18,7 @@
     "react-select": "^1.2.1",
     "react-switch": "^2.3.2",
     "react-table": "^6.5.1",
-    "recharts": "^1.0.0-beta.10",
+    "recharts": "^2.1.14",
     "redux": "3.6.0",
     "redux-auth-wrapper": "^2.0.1",
     "redux-persist": "^5.9.1",
